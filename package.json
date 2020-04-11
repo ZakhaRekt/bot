@@ -1,0 +1,23 @@
+{
+  "name": "mafiabot",
+  "version": "0.0.2",
+  "description": "Discord bot for Brawl MMA",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZakhaRekt/bot.git"
+  },
+  "author": "Zakhar Medunica",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZakhaRekt/bot/issues"
+  },
+  "homepage": "https://github.com/ZakhaRekt/bot#readme",
+  "dependencies": {
+    "discord.js": "^12.1.1",
+    "utf-8-validate": "^5.0.2"
+  }
+}
