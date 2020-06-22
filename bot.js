@@ -1,82 +1,453 @@
+//Общие константы 
+const Discord = require('discord.js');
+const bot = new Discord.Client();
+const fs = require("fs");
 
-//Подключение discord.js
-const config = require('./config.json');
-const Discord = require('discord.js'); 
-const { Client, Collection } = require("discord.js");
-const client = new Discord.Client();
-client.commands = new Discord.Collection();
-const commands = {};
+//для команд
+const { getMember, formatDate, getRandomInt } = require("./functions.js");
+const { stripIndents } = require("common-tags");
 
+//Economy
+const membersValue = new Map();
+//command Warn
+const warnMembers = new Map();
 
+let serverid = '711648783125184620';
+let prefix = '!';
 
-
-const fs = require('fs');
-const utils = require('util');
-
-const readFileAsync = utils.promisify(fs.readFile);
-const writeFileAsync = utils.promisify(fs.writeFile);
-const readDirAsync = utils.promisify(fs.readdir);
-const existsAsync = utils.promisify(fs.exists);
-
+bot.login(process.env.token);
 
 
-
-module.exports.readFileAsync = readFileAsync;
-module.exports.writeFileAsync = writeFileAsync;
-module.exports.readDirAsync = readDirAsync;
-module.exports.existsAsync = existsAsync; 
-
-//"достаём" токен и префикс
-const { token } = require("./config.json"); 
-const prefix = config.prefix;
-
-
-client.commands = new Collection();
-
-
-["command", "listener"].forEach((handler) => {
-    require(`./handlers/${handler}`)(client);
+bot.on('ready', () => {
+    console.log("Бот был успешно запущен!"); // Написать что бот запущен
+    bot.user.setPresence({ game: { name: 'Economy All Gamers' }, status: 'online' }) // Установить игру
 });
 
-
-
-//создаём ссылку-приглашение для бота
-client.on('ready', () => { 
-    console.log(`Started ${client.user.username}`);
-    client.generateInvite(["ADMINISTRATOR"]).then(link => { 
-        console.log(link);
-    });
-});
-
-
-//Загрузка команд
-async function loadCommands(path) {
-	console.log ("loading commands...");
-	let files = await utils.readDirAsync(path);
-	files.forEach(file => {
-		if (file.endsWith('.js')) {
-			let cname =file.toLowerCase().substring(0, file.lenght - 3);
-			let command = require(`${path}/${file}`);
-			commands[cname] = command;
+bot.on('message', async message => {
+	if (message.guild.id != serverid) return;
+    if (message.channel.type == "dm") return; // Если в ЛС, то выход.
+    if (message.type === "PINS_ADD") return message.delete(); 
+    if (message.author.bot) return;
+    if (message.member.roles.cache.some(role => role.id === "720246252067094650")) return;
+    if (message.content == "/ping") return message.reply("`я онлайн.`") && console.log(`Бот ответил ${message.member.displayName}, что я онлайн.`);
+    if (message.content.startsWith(`/run`)) {
+        if (!message.member.hasPermission("ADMINISTRATOR") && message.author.id !== '422109629112254464' && message.author.id !== '407228819498336256' && message.author.id !== '646573856785694721') {
+            message.reply(`\`недостаточно прав доступа!\``).then(msg => msg.delete(7000));
+            return message.delete();
+        }
+        const args = message.content.slice(`/run`).split(/ +/);
+        let cmdrun = args.slice(1).join(" ");
+        try {
+            eval(cmdrun);
+        } catch (err) {
+            message.reply(`**\`произошла ошибка: ${err.name} - ${err.message}\`**`);
+        }
+    }
+/*
+*			
+*
+*		Кастомные команды >> Все команды
+*
+*
+*/
+	
+	/* Написать в чат от имени бота */
+if(message.content.startsWith(`${prefix}say`)) {
+	if (message.member.hasPermission("ADMINISTRATOR") || message.author.id == '422109629112254464' || message.author.id == '407228819498336256') { 
+		const args = message.content.slice(`${prefix}say`).trim().split(/ +/g);
+		if(!args[1]) {
+			message.delete();
+			return message.channel.send(`\`\` Нечего не хотите сказать?\`\``)
+				.then(m => m.delete({timeout:5000}));
 		}
-	});
+		const sayEmbed = new Discord.MessageEmbed()
+			.setTitle("All Gamers >> Rules")
+			.setColor("#ff4a4d")
+			.addField("--------------------------------------------",`${args.slice(1).join(" ")}`)
+			.setFooter("© Info | All Gamers");
+		message.delete();
+		message.channel.send(sayEmbed);
+
+	}
+	else {
+		message.delete();
+		return message.channel.send(`\`\` У вас нет прав для использования данной команды!\`\``)
+			.then(m => m.delete({timeout:5000}));
+	}
+}
+    /* Команда изменения префикса бота */
+
+if(message.content.startsWith(`${prefix}changeprefix`)) {
+    	if (message.member.hasPermission("ADMINISTRATOR") || message.author.id == '422109629112254464' || message.author.id == '407228819498336256') {
+    	const args = message.content.slice(`${prefix}changeprefix`).trim().split(/ +/g);
+    		if(!args[1]) {
+    			message.delete({timeout:10});
+    			return message.channel.send("\`\`Укажите префикс на который хотите изменить \`\`")
+    				.then(m => m.delete({timeout:5000}))
+    				.catch(err => console.log(err));
+    		}
+    		prefix = args[1];
+    		message.delete({timeout:10});
+    		return message.reply(`\`\`Вы изменили префикс на ${args[1]}\`\``)
+    			.then(m => m.delete({timeout:5000}));
+    	}
+    	else {
+    		message.channel.send(`У вас нет прав для использования данной команды!`)
+    			.then(m => m.delete({timeout:5000}))
+    			.catch(err => console.log(err));
+    	}
+}
+
+    /* Команда для кика пользователя с привата */
+if(message.content.startsWith(`${prefix}pkick`)) {
+    	if(message.channel.id === "723927916605603890") {
+    		if(message.member.voice.channel == null) {
+    			message.delete({timeout:10});
+    			return message.channel.send(`\`\`Вашего канала не существует!\`\``)
+    				.then(m => m.delete({timeout:5000}));
+
+    		}
+    		else if (message.member.voice.channel.name === message.member.displayName) {
+    			const args = message.content.slice(`${prefix}pkick`).trim().split(/ +/g);
+    			if(!args[1]) {
+    				message.delete({timeout:10})
+    				return message.channel.send(`\`\`Укажите пользоватеся которого хотите исключить из привата!\`\` `)
+    						.then(m => m.delete({timeout:5000}));
+    			}
+    			if(args[2]) {
+    				return message.delete({timeout:10});
+    			}
+
+    			const kickMember = message.mentions.members.first();
+	    		const privatChannelToKick = message.guild.channels.cache.find(channel => channel.name === message.member.displayName);
+	    		await privatChannelToKick.updateOverwrite(kickMember, {
+									  'SEND_MESSAGES':false,
+									  'CONNECT':false,
+									  'VIEW_CHANNEL':false,
+									  'SPEAK':false,
+									  'STREAM':false,
+									},"Add Member to Privat Channel")
+					.then(channel => console.log(channel.permissionOverwrites.get(kickMember)))
+					.catch(console.error);
+				await kickMember.voice.setChannel(null,"Kick Member From The Channel");
+				await message.channel.send(`\`\`Вы кикнули из привата:\`\` <@${kickMember.id}>`)
+						.then(m => m.delete({timeout:5000}));
+    		}
+    	}
+    	else {
+    		return message.channel.send(`\`\`Вы не можете использоваь данную команду здесь!\`\``)
+    				.then(m => m.delete({timeout:5000}));
+    	}
+}
+    /* Добавление в канал привата */
+if(message.content.startsWith(`${prefix}padd`)) {
+    	if(message.channel.id === "723927916605603890")
+	    	if(message.member.voice.channel.name === message.member.displayName) {
+	    		const args = message.content.slice(`${prefix}padd`).trim().split(/ +/g);
+	    		if(!args[1]) {
+	    			message.delete({timeout: 10})
+	    			return message.channel.send(`\`\`Упомяните человека которого нужно добавить в канал!\`\``)
+	    					.then(m => m.delete({timeout:5000}));
+	    		}
+	    		if(args[2]) {
+	    			return message.delete({timeout:10});
+	    		}
+	    		const addMember = message.mentions.members.first();
+	    		const privatChannelToAdd = message.guild.channels.cache.find(channel => channel.name === message.member.displayName);
+	    		await privatChannelToAdd.updateOverwrite(addMember, {
+									  'SEND_MESSAGES':false,
+									  'CONNECT':true,
+									  'VIEW_CHANNEL':true,
+									  'SPEAK':true,
+									  'STREAM':true,
+									},"Add Member to Privat Channel")
+					.then(channel => console.log(channel.permissionOverwrites.get(addMember)))
+					.catch(console.error);
+				await message.channel.send(`\`\`В приват добавлен пользователь:\`\` <@${addMember.id}>`);
+	    	}
+	    	else {
+	    		message.delete({timeout:10});
+	    		return message.channel.send(`\`\`Вы не можете добавить пользователя не в свой канал!\`\``)
+	    			.then(m => m.delete({timeout: 5000}));
+	    	}
+	    else {
+	    	message.delete({timeout:10});
+	    	return message.channel.send(`\`\`Эту команду можно использовать только в определенном канале! \`\``)
+	    		.then(m => m.delete({timeout:5000}));
+	    }
+}
+    /* Выдать бан */
+if(message.content.startsWith(`${prefix}ban`)) {
+	if (message.member.hasPermission("ADMINISTRATOR") || message.author.id == '422109629112254464' || message.author.id == '407228819498336256') {
+			const args = message.content.slice(`${prefix}ban`).trim().split(/ +/g);
+			if(!args[1]) {
+				message.delete({timeout:10})
+				return message.channel.send(`\`\`Упомяните человека! \`\` `)
+						.then(m => m.delete({timeout:5000}))
+			}
+			if(!args[2]) {
+				message.delete({timeout:10})
+				return message.channel.send(`\`\`Укажите причину! \`\` `)
+						.then(m => m.delete({timeout:5000}))
+			}
+			const toBanMember = message.mentions.members.first() || message.guild.members.get(args[1]);
+			if(!toBanMember) {
+				message.delete({timeout:10})
+				return message.channel.send(`\`\`Человек не найден на сервере! \`\` `)
+						.then(m => m.delete({timeout:5000}))
+			}
+			if(toBanMember.id === message.author.id) {
+				message.delete({timeout:10})
+				return message.channel.send(`\`\`Вы не можете снять все роли у самого себя!\`\` `)
+						.then(m => m.delete({timeout:5000}))
+			}
+			if(message.member.roles.highest.position <= toBanMember.roles.highest.position) {
+				message.delete({timeout:10})
+				return message.channel.send(`\`\`Даже не думай снять роли у того кто выше!\`\` `)
+						.then(m => m.delete({timeout:5000}))
+			}
+			const embedBan = new Discord.MessageEmbed()
+				.setColor("#ff4a4d")
+				.setTitle("Moderation >> Ban")
+	            .setThumbnail(toBanMember.user.displayAvatarURL)
+	            .setFooter(message.member.displayName, message.author.displayAvatarURL)
+	            .setTimestamp()
+	            .setDescription(stripIndents`**> Забанен пользователь:** ${toBanMember} (${toBanMember.id})
+	            **> Забанен модератором:** ${message.member} (${message.member.id})
+	            **> Причина:** ${args.slice(2).join(" ")}`);
+	        message.guild.members.cache.find(mem => mem.id === toBanMember.id).roles.set(['720246252067094650'])
+	        message.channel.send(`<@${message.member.id}>`,embedBan);
+	        message.delete({timeout:10});
+	}
+	else {
+		message.delete({timeout:10})
+		return message.channel.send(`\`\`У вас нет прав для использования данной команды! \`\` `)
+				.then(m => m.delete({timeout:5000}))
+	}
+}
+	/* Выдать варн */
+if(message.content.startsWith(`${prefix}warn`)) {
+	if(message.member.roles.highest.position >= 53) {
+		const args = message.content.slice(`${prefix}warn`).trim().split(/ +/g);
+		if(!args[1]) {
+			message.delete({timeout:10})
+			return message.channel.send(`\`\`Упомяните человека! \`\` `)
+					.then(m => m.delete({timeout:5000}))
+		}
+		if(!args[2]) {
+			message.delete({timeout:10})
+			return message.channel.send(`\`\`Укажите причину! \`\` `)
+					.then(m => m.delete({timeout:5000}))
+			}
+		const toWarnMember = message.mentions.members.first() || message.guild.members.get(args[1]);
+		if(!toWarnMember) {
+				message.delete({timeout:10})
+				return message.channel.send(`\`\`Человек не найден на сервере! \`\` `)
+						.then(m => m.delete({timeout:5000}))
+			}
+			if(toWarnMember.id === message.author.id) {
+				message.delete({timeout:10})
+				return message.channel.send(`\`\`Вы не можете снять все роли у самого себя!\`\` `)
+						.then(m => m.delete({timeout:5000}))
+			}
+			if(message.member.roles.highest.position <= toWarnMember.roles.highest.position) {
+				message.delete({timeout:10})
+				return message.channel.send(`\`\`Даже не думай снять роли у того кто выше!\`\` `)
+						.then(m => m.delete({timeout:5000}))
+			}
+		const warnEmbed = new Discord.MessageEmbed()
+				.setColor("#ff4a4d")
+				.setTitle("Moderation >> Warn")
+	            .setThumbnail(toWarnMember.user.displayAvatarURL)
+	            .setFooter(message.member.displayName, message.author.displayAvatarURL)
+	            .setTimestamp()
+	            .setDescription(stripIndents`**> Варн пользователю:** ${toWarnMember} (${toWarnMember.id})
+	            **> Варн выдан модератором:** ${message.member} (${message.member.id})
+	            **> Причина:** ${args.slice(2).join(" ")}
+	            **> Количество текущих варнов:** ${warnMembers.get(toWarnMember.id)+1}`);
+		if(warnMembers.get(toWarnMember.id) === 0) {
+			message.delete({timeout:10});
+			message.channel.send(warnEmbed);
+			return warnMembers.set(toWarnMember.id,1);
+		}
+		if(warnMembers.get(toWarnMember.id) === 1) {
+			message.delete({timeout:10});
+			message.channel.send(warnEmbed);
+			return warnMembers.set(toWarnMember.id,2);
+		}
+		if(warnMembers.get(toWarnMember.id) === 2) {
+			message.delete({timeout:10});
+			const finalWarnEmb = new Discord.MessageEmbed()
+				.setColor("#ff4a4d")
+				.setTitle("Moderation >> Warn")
+				.addField("**Забанен**", `<@${toWarnMember.id}>`,true)
+				.addField("**Причина**", `Warns 3/3`)
+				.setFooter(message.member.displayName, message.author.displayAvatarURL);
+			await message.channel.send(finalWarnEmb);
+			await toWarnMember.roles.set(['720246252067094650']);
+			return warnMembers.delete(toWarnMember.id);
+		}
+
+	}
+	else {
+		message.delete({timeout:10})
+		return message.channel.send(`\`\`У вас нет прав для использования данной команды! \`\` `)
+				.then(m => m.delete({timeout:5000}))
+	}
+}
+	/* Внести/обновить список учсников гильдии для варнов */
+if(message.content.startsWith(`${prefix}sobr`)) {
+	if(message.member.hasPermission("ADMINISTRATOR") || message.author.id == '422109629112254464' || message.author.id == '407228819498336256') {
+		message.delete();
+		await message.guild.members.cache.each(member => warnMembers.set(member.id,0));
+		await message.guild.members.cache.each(member => membersValue.set(member.id,0));
+		await message.channel.send("Готово!")
+			.then(m => m.delete({timeout:2000}));
+	}
+	else {
+		return message.delete();
+	}
+}
+if (message.content.startsWith(`${prefix}info`)) {
+	const rolesForAuthor = message.member.roles.cache
+				.filter(r => r.id !== message.guild.id)
+                .map(r => r).join("\n") || 'none';
+	const infoEmbed = new Discord.MessageEmbed()
+		.setTitle("Moderation >> Info")
+		.setDescription("Информация о пользователе")
+		.setColor("#ff4a4d")
+		.addField("**Никнейм**", `\`\`${message.member.displayName}\`\``)
+		.addField("**Ид пользоваателя**", `\`\`${message.author.id}\`\``)
+		.addField("**Роли**", `${rolesForAuthor}`)
+		.addField("**На сервере с**", `\`\`${formatDate(message.member.joinedAt)}\`\``,true)
+		.setFooter(`© Info | All Gamers`)
+		.setTimestamp();
+	const args = message.content.slice(`${prefix}info`).trim().split(/ +/g);
+	if(!args[1]) {
+		message.delete();
+		return message.channel.send(infoEmbed)
+
+	}
+	if(args[2]) {
+		return
+	}
+	message.delete()
+	const memberInfo = message.guild.member(message.mentions.users.first());
+	const rolesForMember = memberInfo.roles.cache
+				.filter(r => r.id !== message.guild.id)
+                .map(r => r).join("\n") || 'none';
+	const memberInfoEmbed = new Discord.MessageEmbed()
+		.setTitle("Moderation >> Info")
+		.setDescription("Информация о пользователе")
+		.setColor("#ff4a4d")
+		.addField("**Никнейм**", `\`\` ${memberInfo.displayName}\`\``)
+		.addField("**Ид пользоваателя**", `\`\`${memberInfo.user.id}\`\``)
+		.addField("**Роли**", `${rolesForMember}`,true)
+		.addField("**На сервере с**", `\`\`${formatDate(memberInfo.joinedAt)}\`\``,true)
+		.setFooter(`© Info | All Gamers`)
+		.setTimestamp();
+	return message.channel.send(memberInfoEmbed);
 }
 
 
-//Команды
-client.on('message', async msg => {
-	if (msg.author.bot || msg.channel.type != "text") return;
-	if (msg.content.toLowerCase().startsWith(prefix)) {
-		let m = msg.content.slice(prefix.lenght);
-		for(let cname in commands) {
-			if (m.startsWith(cname)) {
-				let args =  m.slice(cname.lenght).split(' ').filter(el => el != '');
-				await commands[cname].run(client,msg,args);
-			}
-		}
-	}
+
+
+/*
+*			
+*
+*		Економика сервера >> Все команды
+*
+*
+*/
+    	/*Проверка баланса счета*/
+    if(message.content.startsWith(prefix + "$")) {
+    	if (membersValue.has(message.author.id)) {
+    		return message.channel.send(`\`\`На вашем счету: ${membersValue.get(message.author.id)} тыкв\`\``)
+    	}
+  		membersValue.set(message.author.id, 0);
+  		message.channel.send("\`\`Вы были записаны в банк тыкв!\`\`");
+    }
+    if(message.content.startsWith(prefix + "give")) {
+    	if (!membersValue.has(message.author.id)) {
+    		message.delete(10);
+    		return message.channel.send(`\`\`У человека нет записи в банке! Что-бы запсатся используйте:${prefix}$ \`\``)
+    			.then(m => m.delete(5000))
+    	}
+    	const args = message.content.slice(prefix.length).trim().split(/ +/g);
+    	if(!args[1]) {
+    		message.delete(10);
+    		return message.channel.send("\`\`Упомяните человека которому хотите выдать тыквы!\`\`")
+    				.then(m => m.delete(5000))
+    				.catch(err => console.log(err));
+    	}
+    	if(!args[2]) {
+    		message.delete(10);
+    		return message.channel.send("\`\`Укажите количество тыкв которые нужно выдать!\`\`")
+    				.then(m => m.delete(5000))
+    				.catch(err => console.log(err));
+    	}
+    	if (isNan(parseInt(args[2]))) {
+    		message.delete(10);
+    		return message.channel.send("\`\`количество принимается только в цыфрах!\`\`")
+    				.then(m => m.delete(5000))
+    				.catch(err => console.log(err));
+
+    	}
+    	membersValue.set(message.author.id, args[2])
+    }
 });
+const costil = [];
+/*Создание привата*/
+    bot.on('voiceStateUpdate', async (oldState,newState) => {
+    	if(newState.channelID === "720357135669526558") {
+    		const oldChannel = newState.guild.channels.cache.get("720357134793048155");
+    		if(oldChannel.children.some(channel => channel.name === `${newState.member.displayName}`)) {
+	    		await newState.guild.channels.cache.find(c => c.name === `${newState.member.displayName}`).delete();
+	    		return newState.member.send(`\`\`Нельзя создать более одного привата! \`\``)
+    		}
+    		 const newPrivateChannel = await newState.guild.channels.create(newState.member.displayName, {
+    			type:"voice",
+    			topic:"Privat Channel",
+    			nsfw:false,
+    			bitrate:64000,
+    			userLimit:2,
+    			parent:"720357134793048155",
+    			permissionOverwrites:[
+    			{
+    				id:newState.id,
+    				allow:["VIEW_CHANNEL","CONNECT","SPEAK","STREAM","SEND_MESSAGES","MANAGE_CHANNELS"],
+    				deny:["ADMINISTRATOR","KICK_MEMBERS","BAN_MEMBERS","MANAGE_GUILD"],
+    				type:"member",
+    			},
+    			{
+    				id:"711648783125184620",
+    				allow:["CONNECT","SPEAK","STREAM","VIEW_CHANNEL"],
+    				deny:["ADMINISTRATOR","KICK_MEMBERS","BAN_MEMBERS","MANAGE_GUILD","SEND_MESSAGES","MANAGE_CHANNELS"],
+    				type:"role",
+    			},
+    			{
+    				id:"720010556542812231",
+    				allow:["CONNECT","SPEAK","STREAM","VIEW_CHANNEL","MANAGE_CHANNELS"],
+    				deny:["ADMINISTRATOR","KICK_MEMBERS","BAN_MEMBERS","MANAGE_GUILD","SEND_MESSAGES"],
+    				type:"role",
+    			},
+    			{
+    				id:"723567163373256735",
+    				allow:["CONNECT","SPEAK","STREAM","VIEW_CHANNEL","MANAGE_CHANNELS"],
+    				deny:["ADMINISTRATOR","KICK_MEMBERS","BAN_MEMBERS","MANAGE_GUILD","SEND_MESSAGES"],
+    				type:"role",
+    			}
+    		],
+    	});
+    	await newState.setChannel(newPrivateChannel,"Moved to Privat Channel");
+    	await costil.push(newPrivateChannel.id);
+    }
+    if(oldState.channelID == costil[0] && newState.guild.channels.cache.find(z => z.id === costil[0]).members.array().length == 0) {
+    	await costil.shift();
+    	await oldState.channel.delete();
+    		if(newState.channelID === "720357135669526558") {
+    			return;
+    		}
+	}
 
-
-//Login client
-client.login(token);
+ });
