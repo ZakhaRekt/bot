@@ -373,7 +373,7 @@ if(message.content.startsWith(`${prefix}inrole`)) {
 			.setTitle("Roles >> All Gamesrs")
 			.setColor("#ff4a4d")
 			.setFooter("© Inrole | All Gamers") 
-		mesage.delete();
+		await message.delete();
 		await role.members.each(member => rolesEmbed.addField(`-${member.user.tag}`,`-`));
 		await message.channel.send(rolesEmbed);
 
