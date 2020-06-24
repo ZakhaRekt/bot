@@ -369,9 +369,14 @@ if(message.content.startsWith(`${prefix}inrole`)) {
 			message.channel.send("\`\`Укажите ид роли корректно!\`\`")
 				.thne(m => m.delete({timeout:5000}));
 		}
-		await role.members.each(member => message.channel.send(`<@${member.id}>`));
-		await mesage.delete();
-		await message.channel.send(inRoleEmbed);
+		const rolesEmbed = new Discord.MessageEmbed() 
+			.setTitle("Roles >> All Gamesrs")
+			.setColor("#ff4a4d")
+			.setFooter("© Inrole | All Gamers") 
+		mesage.delete();
+		await role.members.each(member => rolesEmbed.addField(`-${member.user.tag}`,`-`));
+		await message.channel.send(rolesEmbed);
+
 
 	}
 	else {
