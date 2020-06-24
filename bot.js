@@ -371,7 +371,7 @@ if(message.content.startsWith(`${prefix}inrole`)) {
 		}
 		const inRoleEmbed = new Discord.MessageEmbed()
 			.setTitle("Roles >> All Gamers")
-			.addField(`**Список пользователей с данной ролью**`,``);
+			.addField(`**Список пользователей с данной ролью**`,``)
 			.setFooter("© Roles | All Gamers")
 		await role.members.each(member => inRoleEmbed.fields[0].value = `<@${member.id}>\n`);
 		await mesage.delete();
