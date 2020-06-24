@@ -357,7 +357,7 @@ if(message.content.startsWith(`${prefix}report`)) {
 }
 if(message.content.startsWith(`${prefix}inrole`)) {
 	if(message.member.roles.highest.position >= 49) {
-		const args = message.content.slice(`${prefix}warn`).trim().split(/ +/g);
+		const args = message.content.slice(`${prefix}inrole`).trim().split(/ +/g);
 		if(!args[1]) {
 			message.delete();
 			message.channel.send("\`\`Укажите ид роли которую хотите проверить!\`\`")
