@@ -275,6 +275,11 @@ if(message.content.startsWith(`${prefix}sobr`)) {
 	}
 }
 if (message.content.startsWith(`${prefix}info`)) {
+	if (message.channel != message.guild.channels.cache.get("719986243160506571")) {
+		message.delete();
+		return message.channel.send(`\`\`Комадны можно использовать только в канале:\`\`<#719986243160506571>`)
+			.then(message.delete({timeout:5000}));
+	}
 	const rolesForAuthor = message.member.roles.cache
 				.filter(r => r.id !== message.guild.id)
                 .map(r => r).join("\n") || 'none';
@@ -316,6 +321,11 @@ if (message.content.startsWith(`${prefix}info`)) {
 }
 /*Система репорта*/
 if(message.content.startsWith(`${prefix}report`)) {
+	if (message.channel != message.guild.channels.cache.get("719986243160506571")) {
+		message.delete();
+		return message.channel.send(`\`\`Комадны можно использовать только в канале:\`\`<#719986243160506571>`)
+			.then(message.delete({timeout:5000}));
+	}
 	const memberCollDown = reportCullDown.get(message.author.id);
 	if(memberCollDown) {
 		const remaining = humanizeDuration(memberCollDown - Date.now(),{ language: "ru" });
@@ -366,6 +376,11 @@ if(message.content.startsWith(`${prefix}report`)) {
 
 }
 if(message.content.startsWith(`${prefix}inrole`)) {
+	if (message.channel != message.guild.channels.cache.get("719986243160506571")) {
+		message.delete();
+		return message.channel.send(`\`\`Комадны можно использовать только в канале:\`\`<#719986243160506571>`)
+			.then(message.delete({timeout:5000}));
+	}
 	if(message.member.roles.highest.position >= 49) {
 		const args = message.content.slice(`${prefix}inrole`).trim().split(/ +/g);
 		if(!args[1]) {
