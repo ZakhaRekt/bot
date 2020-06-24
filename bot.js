@@ -369,11 +369,7 @@ if(message.content.startsWith(`${prefix}inrole`)) {
 			message.channel.send("\`\`Укажите ид роли корректно!\`\`")
 				.thne(m => m.delete({timeout:5000}));
 		}
-		const inRoleEmbed = new Discord.MessageEmbed()
-			.setTitle("Roles >> All Gamers")
-			.addField(`**Список пользователей с данной ролью**`,``)
-			.setFooter("© Roles | All Gamers")
-		await role.members.each(member => inRoleEmbed.fields[0].value = `<@${member.id}>\n`);
+		await role.members.each(member => message.channel.send(`<@${member.id}>`));
 		await mesage.delete();
 		await message.channel.send(inRoleEmbed);
 
