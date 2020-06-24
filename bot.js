@@ -338,7 +338,7 @@ if(message.content.startsWith(`${prefix}report`)) {
 		await message.channel.send(`\`\`Ваша жалоба отправленя ожидайте модератор с вами свяжется!\`\``)
 			.then(m => m.delete({timeout:10000}));
 		const reportEmbed = new Discord.MessageEmbed()
-			.setTitle("Report >> All Games")
+			.setTitle("Report >> All Gamers")
 			.setColor("#ff4a4d")
 			.setImage("https://webmasterie.ru/wp-content/uploads/2018/06/Moderator.jpg")
 			.addField("**Жалоба от пользователя**",`<@${message.author.id}>`)
@@ -354,6 +354,33 @@ if(message.content.startsWith(`${prefix}report`)) {
 
 	}
 
+}
+if(message.content.startsWith(`${prefix}inrole`)) {
+	if(message.member.roles.highest.position >= 49) {
+		const args = message.content.slice(`${prefix}warn`).trim().split(/ +/g);
+		if(!args[1]) {
+			message.delete();
+			message.channel.send("\`\`Укажите ид роли которую хотите проверить!\`\`")
+				.then(m => m.delete({timeout:5000}));
+		}
+		const role = message.guild.roles.cache.find(r => r.id === args[1]);
+		if(role) {
+			message.delete();
+			message.channel.send("\`\`Укажите ид роли корректно!\`\`")
+				.thne(m => m.delete({timeout:5000}));
+		}
+		const inRoleEmbed = new Discord.MessageEmbed()
+			.setTitle("Roles >> All Gamers")
+			.addField(`**Список пользователей с данной ролью**`,``);
+			.setFooter("© Roles | All Gamers")
+		await role.members.each(member => inRoleEmbed.fields[0].value = `<@${member.id}>\n`);
+		await mesage.delete();
+		await message.channel.send(inRoleEmbed);
+
+	}
+	else {
+		return message.channel.send("\`\`Вы не можете использовать данную команду! \`\`")
+	}
 }
 
 
