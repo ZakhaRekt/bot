@@ -1,12 +1,8 @@
 {
-  "name": "All Games",
-  "version": "1.0",
-  "description": "All games bot",
-  "main": "node bot.js",
-  "engines": {
-    "node": "12.x",
-    "npm": "6.x"
-  },
+  "name": "bot",
+  "version": "1.0.0",
+  "description": "All Games Bot",
+  "main": "bot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,8 +17,9 @@
   },
   "homepage": "https://github.com/ZakhaRekt/bot#readme",
   "dependencies": {
+    "common-tags": "^1.8.0",
     "discord.js": "^12.2.0",
-    "humanize-duration": "^3.23.1",
-    "utf-8-validate": "^5.0.2"
+    "fs": "0.0.1-security",
+    "humanize-duration": "^3.23.1"
   }
 }
