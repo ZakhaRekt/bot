@@ -364,7 +364,7 @@ if(message.content.startsWith(`${prefix}inrole`)) {
 				.then(m => m.delete({timeout:5000}));
 		}
 		const role = message.guild.roles.cache.find(r => r.id === args[1]);
-		if(role) {
+		if(!role) {
 			message.delete();
 			message.channel.send("\`\`Укажите ид роли корректно!\`\`")
 				.thne(m => m.delete({timeout:5000}));
