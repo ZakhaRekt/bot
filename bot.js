@@ -2,6 +2,7 @@
 const Discord = require('discord.js');
 const bot = new Discord.Client();
 const fs = require("fs");
+const humanizeDuration = require('humanize-duration');
 
 //для команд
 const { getMember, formatDate, getRandomInt } = require("./functions.js");
@@ -11,7 +12,8 @@ const { stripIndents } = require("common-tags");
 const membersValue = new Map();
 //command Warn
 const warnMembers = new Map();
-
+//report command
+var reportCullDown = new Map(); 
 let serverid = '711648783125184620';
 let prefix = '!';
 
@@ -139,43 +141,7 @@ if(message.content.startsWith(`${prefix}pkick`)) {
     				.then(m => m.delete({timeout:5000}));
     	}
 }
-    /* Добавление в канал привата */
-if(message.content.startsWith(`${prefix}padd`)) {
-    	if(message.channel.id === "723927916605603890")
-	    	if(message.member.voice.channel.name === message.member.displayName) {
-	    		const args = message.content.slice(`${prefix}padd`).trim().split(/ +/g);
-	    		if(!args[1]) {
-	    			message.delete({timeout: 10})
-	    			return message.channel.send(`\`\`Упомяните человека которого нужно добавить в канал!\`\``)
-	    					.then(m => m.delete({timeout:5000}));
-	    		}
-	    		if(args[2]) {
-	    			return message.delete({timeout:10});
-	    		}
-	    		const addMember = message.mentions.members.first();
-	    		const privatChannelToAdd = message.guild.channels.cache.find(channel => channel.name === message.member.displayName);
-	    		await privatChannelToAdd.updateOverwrite(addMember, {
-									  'SEND_MESSAGES':false,
-									  'CONNECT':true,
-									  'VIEW_CHANNEL':true,
-									  'SPEAK':true,
-									  'STREAM':true,
-									},"Add Member to Privat Channel")
-					.then(channel => console.log(channel.permissionOverwrites.get(addMember)))
-					.catch(console.error);
-				await message.channel.send(`\`\`В приват добавлен пользователь:\`\` <@${addMember.id}>`);
-	    	}
-	    	else {
-	    		message.delete({timeout:10});
-	    		return message.channel.send(`\`\`Вы не можете добавить пользователя не в свой канал!\`\``)
-	    			.then(m => m.delete({timeout: 5000}));
-	    	}
-	    else {
-	    	message.delete({timeout:10});
-	    	return message.channel.send(`\`\`Эту команду можно использовать только в определенном канале! \`\``)
-	    		.then(m => m.delete({timeout:5000}));
-	    }
-}
+
     /* Выдать бан */
 if(message.content.startsWith(`${prefix}ban`)) {
 	if (message.member.hasPermission("ADMINISTRATOR") || message.author.id == '422109629112254464' || message.author.id == '407228819498336256') {
@@ -348,8 +314,47 @@ if (message.content.startsWith(`${prefix}info`)) {
 		.setTimestamp();
 	return message.channel.send(memberInfoEmbed);
 }
+/*Система репорта*/
+if(message.content.startsWith(`${prefix}report`)) {
+	const memberCollDown = reportCullDown.get(message.author.id);
+	if(memberCollDown) {
+		const remaining = humanizeDuration(memberCollDown - Date.now(),{ language: "ru" });
+		return message.channel.send(`\`\`Вы можете использовать команду через:${remaining}\`\``)
+			.then(m => m.delete({timeout:5000}));
+	}
+	else {
+		const args = message.content.slice(`${prefix}warn`).trim().split(/ +/g);
+		if (!args[1]) {
+			message.delete();
+			return message.channel.send(`\`\`Упомяните человека на которого вы отсылаете репорт!\`\` `)
+				.then(m => m.delete({timeout:5000}));
+		}
+		if (!args[2]) {
+			message.delete();
+			return message.channel.send(`\`\`Напишите причину репорта! (от 2-ух слов)\`\` `)
+				.then(m => m.delete({timeout:5000}));
+		}
+		await message.delete({timeout:10});
+		await message.channel.send(`\`\`Ваша жалоба отправленя ожидайте модератор с вами свяжется!\`\``)
+			.then(m => m.delete({timeout:10000}));
+		const reportEmbed = new Discord.MessageEmbed()
+			.setTitle("Report >> All Games")
+			.setColor("#ff4a4d")
+			.setImage("https://webmasterie.ru/wp-content/uploads/2018/06/Moderator.jpg")
+			.addField("**Жалоба от пользователя**",`<@${message.author.id}>`)
+			.addField("**Отправлена с канала**", `<#${message.channel.id}>`)
+			.addField("**Жалоба на пользователя**", `<@${message.mentions.members.first().id}>`)
+			.addField("**Текст жалобы**", `${args.slice(2).join(" ")}`)
+			.addField("**Жалобу рассмотрят**", `<@&723567163373256735> - Модераторы \n <@&720964006889914448> - Администраторы \n **Человек уже ждет рассмотрения своей жалобы!**`)
+			.setFooter("© Report | All Gamers")
+		const reportChannel = message.guild.channels.cache.find(r => r.name === "┃📝┃reports");
+		reportChannel.send(reportEmbed);
+		reportCullDown.set(message.author.id, Date.now() + 300000);
+		setTimeout(() => reportCullDown.delete(messasge.author.id), 300000);
 
+	}
 
+}
 
 
 /*
