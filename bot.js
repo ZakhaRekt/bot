@@ -323,7 +323,7 @@ if(message.content.startsWith(`${prefix}report`)) {
 			.then(m => m.delete({timeout:5000}));
 	}
 	else {
-		const args = message.content.slice(`${prefix}warn`).trim().split(/ +/g);
+		const args = message.content.slice(`${prefix}report`).trim().split(/ +/g);
 		if (!args[1]) {
 			message.delete();
 			return message.channel.send(`\`\`Упомяните человека на которого вы отсылаете репорт!\`\` `)
@@ -337,6 +337,14 @@ if(message.content.startsWith(`${prefix}report`)) {
 		await message.delete({timeout:10});
 		await message.channel.send(`\`\`Ваша жалоба отправленя ожидайте модератор с вами свяжется!\`\``)
 			.then(m => m.delete({timeout:10000}));
+		const toChannelReport = new Discord.MessageEmbed()
+			.setTitle("Report >> All Gamers")
+			.setColor("#ff4a4d")
+			.addField("**Вы отправили жалобу на**",`<@${message.mentions.members.first().id}>`)
+			.addField("**С причиной**",`${args.slice(2).join(" ")}`)
+			.addField("**Вашу жалобу рассмотрят**", `<@&723567087850750013> - \`\`Модераторы\`\` \n <@&720334176041173132> - \`\`Инспекторы\`\``)
+			.addField("**Ожидайте**",`\`\`Ваша жалоба будет рассмотренна в тичении 30 минут.\`\` `)
+			.setFooter("© Report | All Gamers")
 		const reportEmbed = new Discord.MessageEmbed()
 			.setTitle("Report >> All Gamers")
 			.setColor("#ff4a4d")
@@ -345,9 +353,11 @@ if(message.content.startsWith(`${prefix}report`)) {
 			.addField("**Отправлена с канала**", `<#${message.channel.id}>`)
 			.addField("**Жалоба на пользователя**", `<@${message.mentions.members.first().id}>`)
 			.addField("**Текст жалобы**", `${args.slice(2).join(" ")}`)
-			.addField("**Жалобу рассмотрят**", `<@&723567163373256735> - Модераторы \n <@&720964006889914448> - Администраторы \n **Человек уже ждет рассмотрения своей жалобы!**`)
+			.addField("**Жалобу рассмотрят**", `<@&723567163373256735> - \`\`Модераторы\`\` \n <@&720964006889914448> - \`\`Инстпекторы\`\` \n **Человек уже ждет рассмотрения своей жалобы!**`)
 			.setFooter("© Report | All Gamers")
 		const reportChannel = message.guild.channels.cache.find(r => r.name === "┃📝┃reports");
+		message.channel.send(`<@${message.member.id}>`,toChannelReport)
+			.then(m => m.delete({timeout:10000}));
 		reportChannel.send(reportEmbed);
 		reportCullDown.set(message.author.id, Date.now() + 300000);
 		setTimeout(() => reportCullDown.delete(messasge.author.id), 300000);
@@ -360,13 +370,13 @@ if(message.content.startsWith(`${prefix}inrole`)) {
 		const args = message.content.slice(`${prefix}inrole`).trim().split(/ +/g);
 		if(!args[1]) {
 			message.delete();
-			message.channel.send("\`\`Укажите ид роли которую хотите проверить!\`\`")
+			return message.channel.send("\`\`Укажите ид роли которую хотите проверить!\`\`")
 				.then(m => m.delete({timeout:5000}));
 		}
 		const role = message.guild.roles.cache.find(r => r.id === args[1]);
 		if(!role) {
 			message.delete();
-			message.channel.send("\`\`Укажите ид роли корректно!\`\`")
+			return message.channel.send("\`\`Укажите ид роли корректно!\`\`")
 				.thne(m => m.delete({timeout:5000}));
 		}
 		const rolesEmbed = new Discord.MessageEmbed() 
