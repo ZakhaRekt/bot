@@ -438,11 +438,11 @@ if(message.content.startsWith(`${prefix}mute`)) {
 			.setTitle("Mute >> All Gamers")
 			.setDescription(`\`\`Информация о муте\`\``)
 			.setColor("#ff4a4d")
-			.addField("\`\`Замучен пользователь\`\`", `<@${memberToMute.id}>`)
+			.addField("\`\`Замучен пользователь\`\`", `<@${memberToMute.id}>`,true)
 			.addField("\`\`Модератором\`\`", `<@${message.author.id}>`,true)
-			.addField("\`\`Время\`\`", `${ms(ms(args[2]))}`)
-			.addField("\`\`Причина\`\`", `${args.slice(3).join(" ")}`)
-			.addField("\`\`Статус\`\`", `<a:Yes:724926389148450898>`,true)
+			.addField("\`\`Время\`\`", `${ms(ms(args[2]))}`,true)
+			.addField("\`\`Причина\`\`", `${args.slice(3).join(" ")}`,true)
+			.addField("\`\`Статус\`\`", `<a:emoji_42:714016857925091358>`,true)
 			.setFooter("© Mute | All Gamers")
 		await message.delete();
 		await memberToMute.roles.add(muteRole.id);
