@@ -444,11 +444,11 @@ if(message.content.startsWith(`${prefix}mute`)) {
 			.addField("\`\`Статус\`\`", `:galochka:`)
 			.setFooter("©Mute | All Gamers")
 		await message.delete();
-		await memberToMute.addRole(muteRole.id);
+		await memberToMute.roles.add(muteRole.id);
 		await message.channel.send(muteEmbed);
 
 		setTimeout(function() {
-			memberToMute.removeRole(muteRole.id);
+			memberToMute.roles.remove(muteRole.id);
 			message.guild.channels.cache.get("719986243160506571").send(`<@${memberToMute.id}> \`\`Был размучен!\`\``);			
 		}, ms(args[2]));
 
