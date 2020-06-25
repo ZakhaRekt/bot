@@ -503,6 +503,7 @@ if(message.content.startsWith(`${prefix}mute`)) {
     				.catch(err => console.log(err));
 
     	}
+    	message.channel.send(`<@${args[1].id}> было выдано ${args[2]} тыкв`)
     	membersValue.set(message.author.id, args[2])
     }
 });
