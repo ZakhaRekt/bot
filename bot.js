@@ -364,7 +364,7 @@ if(message.content.startsWith(`${prefix}report`)) {
 			.addField("**Отправлена с канала**", `<#${message.channel.id}>`)
 			.addField("**Жалоба на пользователя**", `<@${message.mentions.members.first().id}>`)
 			.addField("**Текст жалобы**", `${args.slice(2).join(" ")}`)
-			.addField("**Жалобу рассмотрят**", `<@&723567163373256735> - \`\`Модераторы\`\` \n <@&720964006889914448> - \`\`Инстпекторы\`\` \n **Человек уже ждет рассмотрения своей жалобы!**`)
+			.addField("**Жалобу рассмотрят**", `<@&723567087850750013> - \`\`Модераторы\`\` \n <@&720334176041173132> - \`\`Инстпекторы\`\` \n **Человек уже ждет рассмотрения своей жалобы!**`)
 			.setFooter("© Report | All Gamers")
 		const reportChannel = message.guild.channels.cache.find(r => r.name === "┃📝┃reports");
 		message.channel.send(`<@${message.member.id}>`,toChannelReport)
@@ -437,12 +437,13 @@ if(message.content.startsWith(`${prefix}mute`)) {
 		const muteEmbed = new Discord.MessageEmbed()
 			.setTitle("Mute >> All Gamers")
 			.setDescription(`\`\`Информация о муте\`\``)
+			.setColor("#ff4a4d")
 			.addField("\`\`Замучен пользователь\`\`", `<@${memberToMute.id}>`)
-			.addField("\`\`Модератором\`\`", `<@${message.author.id}>`)
+			.addField("\`\`Модератором\`\`", `<@${message.author.id}>`,true)
 			.addField("\`\`Время\`\`", `${ms(ms(args[2]))}`)
 			.addField("\`\`Причина\`\`", `${args.slice(3).join(" ")}`)
-			.addField("\`\`Статус\`\`", `:galochka:`)
-			.setFooter("©Mute | All Gamers")
+			.addField("\`\`Статус\`\`", `<a:Yes:724926389148450898>`,true)
+			.setFooter("© Mute | All Gamers")
 		await message.delete();
 		await memberToMute.roles.add(muteRole.id);
 		await message.channel.send(muteEmbed);
