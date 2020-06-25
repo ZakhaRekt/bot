@@ -496,7 +496,7 @@ if(message.content.startsWith(`${prefix}mute`)) {
     				.then(m => m.delete(5000))
     				.catch(err => console.log(err));
     	}
-    	if (isNan(parseInt(args[2]))) {
+    	if (isNaN(parseInt(args[2]))) {
     		message.delete(10);
     		return message.channel.send("\`\`количество принимается только в цыфрах!\`\`")
     				.then(m => m.delete(5000))
