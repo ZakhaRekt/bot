@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const bot = new Discord.Client();
 const fs = require("fs");
 const humanizeDuration = require('humanize-duration');
+const ms = require("ms");
 
 //для команд
 const { getMember, formatDate, getRandomInt } = require("./functions.js");
@@ -278,7 +279,7 @@ if (message.content.startsWith(`${prefix}info`)) {
 	if (message.channel != message.guild.channels.cache.get("719986243160506571")) {
 		message.delete();
 		return message.channel.send(`\`\`Комадны можно использовать только в канале:\`\`<#719986243160506571>`)
-			.then(message.delete({timeout:5000}));
+			.then(m => m.delete({timeout:5000}));
 	}
 	const rolesForAuthor = message.member.roles.cache
 				.filter(r => r.id !== message.guild.id)
@@ -324,7 +325,7 @@ if(message.content.startsWith(`${prefix}report`)) {
 	if (message.channel != message.guild.channels.cache.get("719986243160506571")) {
 		message.delete();
 		return message.channel.send(`\`\`Комадны можно использовать только в канале:\`\`<#719986243160506571>`)
-			.then(message.delete({timeout:5000}));
+			.then(m => m.delete({timeout:5000}));
 	}
 	const memberCollDown = reportCullDown.get(message.author.id);
 	if(memberCollDown) {
@@ -379,7 +380,7 @@ if(message.content.startsWith(`${prefix}inrole`)) {
 	if (message.channel != message.guild.channels.cache.get("719986243160506571")) {
 		message.delete();
 		return message.channel.send(`\`\`Комадны можно использовать только в канале:\`\`<#719986243160506571>`)
-			.then(message.delete({timeout:5000}));
+			.then(m => m.delete({timeout:5000}));
 	}
 	if(message.member.roles.highest.position >= 49) {
 		const args = message.content.slice(`${prefix}inrole`).trim().split(/ +/g);
@@ -406,6 +407,56 @@ if(message.content.startsWith(`${prefix}inrole`)) {
 	}
 	else {
 		return message.channel.send("\`\`Вы не можете использовать данную команду! \`\`")
+	}
+} 
+ /* Выдать мут */
+if(message.content.startsWith(`${prefix}mute`)) {
+	if(message.member.roles.highest.position >= 53) {
+		const args = message.content.slice(`${prefix}mute`).trim().split(/ +/g);
+		if(!args[1]) {
+			await message.delete();
+			return await message.channel.send(`\`\` Упомяните пользователя которого хотите замутить!\`\``)
+				.then(m => m.delete({timeout:5000}));
+		}
+		if(!args[2]) {
+			await message.delete();
+			return await message.channel.send(`\`\`Укажите время мута.\`\``)
+				.then(m => m.delete({timeout:5000}));
+		}
+		if(!args[3]) {
+			await message.delete();
+			return await message.channel.send(`\`\`Укажите причину мута! \`\``)
+				.then(m => m.delete({timeout:5000}));
+		}
+		const memberToMute = message.mentions.members.first();
+		if(!memberToMute) {
+			await message.delete();
+			return await message.channel.send(`\`\`Пользователь не найден! \`\``);
+		}
+		const muteRole = message.guild.roles.cache.find(r => r.id === "725667512355651584");
+		const muteEmbed = new Discord.MessageEmbed()
+			.setTitle("Mute >> All Gamers")
+			.setDescription(`\`\`Информация о муте\`\``)
+			.addField("\`\`Замучен пользователь\`\`", `<@${memberToMute.id}>`)
+			.addField("\`\`Модератором\`\`", `<@${message.author.id}>`)
+			.addField("\`\`Время\`\`", `${ms(ms(args[2]))}`)
+			.addField("\`\`Причина\`\`", `${args.slice(3).join(" ")}`)
+			.addField("\`\`Статус\`\`", `:galochka:`)
+			.setFooter("©Mute | All Gamers")
+		await message.delete();
+		await memberToMute.addRole(muteRole.id);
+		await message.channel.send(muteEmbed);
+
+		setTimeout(function() {
+			memberToMute.removeRole(muteRole.id);
+			message.guild.channels.cache.get("719986243160506571").send(`<@${memberToMute.id}> \`\`Был размучен!\`\``);			
+		}, ms(args[2]));
+
+	}
+	else {
+		await message.delete();
+		await message.channel.send(`\`\`У вас нет прав для использования данной команды! \`\` `)
+			.then(m => m.delete({timeout:5000}));
 	}
 }
 
