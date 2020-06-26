@@ -522,8 +522,8 @@ if(message.content.startsWith(`${prefix}mute`)) {
     		.addField("**🟢Онлайн**",`\`\`${message.guild.members.cache.filter(memb => memb.presence.status === "online").array().length} пользователей\`\``)
     		.addField("**⚫Оффлайн**",`\`\`${message.guild.members.cache.filter(memb => memb.presence.status === "offline").array().length} пользователей\`\``)
     		.addField("**🧩Всего каналов**",`\`\`${message.guild.channels.cache.array().length}\`\``)
-    		.addField("**👮‍♂️Всего ролей**",`\`\`${message.guild.roles.cahce.array().length}\`\``)
-    		.addField("**🧍‍♂️Всего пользователей**",`\`\`${message.guild.members.cahce.array().length}\`\``)
+    		.addField("**👮‍♂️Всего ролей**",`\`\`${message.guild.roles.cache.array().length}\`\``)
+    		.addField("**🧍‍♂️Всего пользователей**",`\`\`${message.guild.members.cache.array().length}\`\``)
     		.setFooter("Server Info >> All Gamers")
     	message.delete();
     	message.channel.send(serverInfoEmbed);
@@ -658,7 +658,7 @@ const costil = [];
     	if(newState) {
     		var channelMembers = 0; 
     		await newState.guild.channels.cache.filter(ch => ch.type === "voice").each(c => channelMembers += c.members.array().length);
-    		await newState.guild.channels.get("722065610879533129").setName(`┃🔊┃Voice: ${channelMembers}`);
+    		await newState.guild.channels.cache.get("722065610879533129").setName(`┃🔊┃Voice: ${channelMembers}`);
     	}
     	if(newState.channelID === "720357135669526558") {
     		const oldChannel = newState.guild.channels.cache.get("720357134793048155");
