@@ -69,9 +69,9 @@ if(message.content.startsWith(`${prefix}say`)) {
 				.then(m => m.delete({timeout:5000}));
 		}
 		const sayEmbed = new Discord.MessageEmbed()
-			.setTitle("All Gamers >> Rules")
+			.setTitle("All Gamers")
 			.setColor("#ff4a4d")
-			.addField("--------------------------------------------",`${args.slice(1).join(" ")}`)
+			.addField("**Бот говорит**",`${args.slice(1).join(" ")}`)
 			.setFooter("© Info | All Gamers");
 		message.delete();
 		message.channel.send(sayEmbed);
@@ -511,6 +511,24 @@ if(message.content.startsWith(`${prefix}mute`)) {
     		message.channel.send(`\`\`Нет прав для выполнения команды\`\``);
     	}
     }
+    /*Информация о сервере*/
+
+    if (message.content.startsWith(`${prefix}serverinfo`)) {
+    	const serverInfoEmbed = new Discord.MessageEmbed() 
+    		.setTitle("Server Info")
+    		.setColor("#ff4a4d")
+    		.addField("**🪁Название сервера**",`\`\`${message.guild.name}\`\``)
+    		.addField("**🏳️Регион**",`\`\`RU - Europe \`\``)
+    		.addField("**🟢Онлайн**",`\`\`${message.guild.members.cache.filter(memb => memb.presence.status === "online").array().length} пользователей\`\``)
+    		.addField("**⚫Оффлайн**",`\`\`${message.guild.members.cache.filter(memb => memb.presence.status === "offline").array().length} пользователей\`\``)
+    		.addField("**🧩Всего каналов**",`\`\`${message.guild.channels.cache.array().length}\`\``)
+    		.addField("**👮‍♂️Всего ролей**",`\`\`${message.guild.roles.cahce.array().length}\`\``)
+    		.addField("**🧍‍♂️Всего пользователей**",`\`\`${message.guild.members.cahce.array().length}\`\``)
+    		.setFooter("Server Info >> All Gamers")
+    	message.delete();
+    	message.channel.send(serverInfoEmbed);
+
+    }
 
 
 /*
@@ -613,12 +631,12 @@ if(message.content.startsWith(`${prefix}mute`)) {
 
     }
     /* Автовыдача Тыкв */
-    if(message.content.startsWith(`${prefix}work`)) {
+    if(message.content.startsWith(`${prefix}present`)) {
     	const cooldown = workCoolDown.get(message.author.id);
 		if(cooldown) {
-			await message.delete()
+			message.delete();
 			const remain = humanizeDuration(workCoolDown - Date.now(),{ language: "ru" });
-			return await message.channel.send(`\`\`Вы можете использовать команду через:${remain}\`\``)
+			return message.channel.send(`\`\`Вы можете использовать команду через:${remain}\`\``)
 				.then(m => m.delete({timeout:5000}));
 		}
 		if(!membersValue.has(message.author.id)) {
@@ -637,6 +655,11 @@ if(message.content.startsWith(`${prefix}mute`)) {
 const costil = [];
 /*Создание привата*/
     bot.on('voiceStateUpdate', async (oldState,newState) => {
+    	if(newState) {
+    		var channelMembers = 0; 
+    		await newState.guild.channels.cache.filter(ch => ch.type === "voice").each(c => channelMembers += c.members.array().length);
+    		await newState.guild.channels.get("722065610879533129").setName(`┃🔊┃Voice: ${channelMembers}`);
+    	}
     	if(newState.channelID === "720357135669526558") {
     		const oldChannel = newState.guild.channels.cache.get("720357134793048155");
     		if(oldChannel.children.some(channel => channel.name === `${newState.member.displayName}`)) {
@@ -689,3 +712,10 @@ const costil = [];
 	}
 
  });
+bot.on('guildMemberAdd', async(member) => {
+	await member.guild.channels.cache.get("722065483934859325").setName(`┃🌏┃All Members: ${member.guild.members.cache.array().length}`);
+});
+bot.on('guildMemberRemove', async(member) => {
+	await member.guild.channels.cache.get("722065483934859325").setName(`┃🌏┃All Members: ${member.guild.members.cache.array().length}`);
+});
+
