@@ -618,7 +618,7 @@ if(message.content.startsWith(`${prefix}mute`)) {
 		if(cooldown) {
 			await message.delete()
 			const remain = humanizeDuration(workCoolDown - Date.now(),{ language: "ru" });
-			return await message.channel.send(`\`\`Вы можете использовать команду через:${remaining}\`\``)
+			return await message.channel.send(`\`\`Вы можете использовать команду через:${remain}\`\``)
 				.then(m => m.delete({timeout:5000}));
 		}
 		if(!membersValue.has(message.author.id)) {
