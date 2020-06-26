@@ -13,8 +13,13 @@ const { stripIndents } = require("common-tags");
 const membersValue = new Map();
 //command Warn
 const warnMembers = new Map();
-//report command
-var reportCullDown = new Map(); 
+//report cooldown
+const reportCullDown = new Map();
+//work command coolDown
+const workCoolDown = new Map();
+
+
+
 let serverid = '711648783125184620';
 let prefix = '!';
 
@@ -460,6 +465,52 @@ if(message.content.startsWith(`${prefix}mute`)) {
 			.then(m => m.delete({timeout:5000}));
 	}
 }
+    /* Посмтортеть активные наказания */
+
+    if(message.content.startsWith(`${prefix}history`)) {
+    	if(message.member.roles.highest.position >= 53) {
+    		const args = message.content.slice(`${prefix}history`).trim().split(/ +/g);
+    		if(!args[1]) {
+    			message.delete()
+    			return message.channel.send(`\`\`Упомяните пользователя у кого хотите посмтортеть историю предупреждений! \`\``)
+    				.then(m => m.delete({timeout:5000}));
+    		}
+    		const historyMember = message.mentions.members.first();
+    		if(!historyMember) {
+    			message.delete()
+    			return message.channel.send(`\`\`Неверно указан пользователь!\`\` `)
+    				.then(m => m.delete({timeout:5000}))
+    		}
+    		if(warnMembers.get(historyMember.id) > 0) {
+	    		const isHasWarn = new Discord.MessageEmbed()
+	    			.setTitle("History >> All Gamers")
+	    			.setColor("#ff4a4d")
+	    			.setDescription("Информация про наказания пользователя")
+	    			.addField("**Информация о пользователе**", `<@${historyMember.id}>`)
+	    			.addField("**Активных Варнов**", `\`\`${warnMembers.get(historyMember.id)}\`\``)
+	    			.setFooter(`© History >> All Gamers`)
+	    		await message.delete();
+	    		return await message.channel.send(isHasWarn)
+	    			.then(m => m.delete({timeout:10000}));
+	    	}
+	    	if(warnMembers.get(historyMember.id) == 0 || warnMembers.get(historyMember.id) == undefined) {
+	    		const hasNoWarn = new Discord.MessageEmbed()
+	    			.setTitle("History >> All Gamers")
+	    			.setColor("#ff4a4d")
+	    			.setDescription("Информация про наказания пользователя")
+	    			.addField("**Информация о пользователе**", `<@${historyMember.id}>`)
+	    			.addField("**Активных Варнов**", `\`\`Пользователь не имеет активных варнов!\`\``)
+	    			.setFooter(`© History >> All Gamers`)
+	    		await message.delete();
+	    		return await message.channel.send(hasNoWarn)
+	    			.then(m => m.delete({timeout:10000}));
+	    	}
+    	}
+    	else {
+    		message.delete();
+    		message.channel.send(`\`\`Нет прав для выполнения команды\`\``);
+    	}
+    }
 
 
 /*
@@ -559,6 +610,27 @@ if(message.content.startsWith(`${prefix}mute`)) {
     	await membersValue.set(message.author.id,membersValue.get(message.author.id) - parseInt(args[2]));
     	await membersValue.set(payMember.id, membersValue.get(payMember.id) + parseInt(args[2]));
     	await message.channel.send(`\`\`Успешно передано ${args[2]} 🎃\`\``);
+
+    }
+    /* Автовыдача Тыкв */
+    if(message.content.startsWith(`${prefix}work`)) {
+    	const cooldown = workCoolDown.get(message.author.id);
+		if(cooldown) {
+			await message.delete()
+			const remain = humanizeDuration(workCoolDown - Date.now(),{ language: "ru" });
+			return await message.channel.send(`\`\`Вы можете использовать команду через:${remaining}\`\``)
+				.then(m => m.delete({timeout:5000}));
+		}
+		if(!membersValue.has(message.author.id)) {
+			await message.delete()
+			return await message.channel.send(`\`\`У человека нет записи в банке! Что-бы запсатся используйте:${prefix}$ \`\``)
+				.then(m => m.delete({timeout:5000}));
+		}
+		await message.delete();
+		await membersValue.set(message.author.id, membersValue.get(message.author.id) + 20);
+		await message.channel.send(`\`\` Вам было начислено 20 подарочных 🎃!\`\` `)
+		await workCoolDown.set(message.author.id, Date.now() + 21600000);
+		setTimeout(() => workCoolDown.delete(messasge.author.id), 21600000);
 
     }
 });
