@@ -470,41 +470,96 @@ if(message.content.startsWith(`${prefix}mute`)) {
 *
 */
     	/*Проверка баланса счета*/
-    if(message.content.startsWith(prefix + "$")) {
+    if(message.content.startsWith(`${prefix}$`)) {
     	if (membersValue.has(message.author.id)) {
-    		return message.channel.send(`\`\`На вашем счету: ${membersValue.get(message.author.id)} тыкв\`\``)
+    		return message.channel.send(`\`\`На вашем счету: ${membersValue.get(message.author.id)} 🎃\`\``)
     	}
   		membersValue.set(message.author.id, 0);
-  		message.channel.send("\`\`Вы были записаны в банк тыкв!\`\`");
+  		message.channel.send("\`\`Вы были записаны в банк 🎃!\`\`");
     }
-    if(message.content.startsWith(prefix + "give")) {
+    /*Выдача валюты (ТОЛЬКО ДЛЯ АДМИНОВ!)*/
+    if(message.content.startsWith(`${prefix}give`)) {
+    	if (message.member.hasPermission("ADMINISTRATOR") || message.author.id == '422109629112254464' || message.author.id == '407228819498336256') {
     	if (!membersValue.has(message.author.id)) {
-    		message.delete(10);
+    		message.delete({timeout:10});
     		return message.channel.send(`\`\`У человека нет записи в банке! Что-бы запсатся используйте:${prefix}$ \`\``)
-    			.then(m => m.delete(5000))
+    			.then(m => m.delete({timeout:5000}))
     	}
-    	const args = message.content.slice(prefix.length).trim().split(/ +/g);
+    	const args = message.content.slice(`${prefix}give`).trim().split(/ +/g);
     	if(!args[1]) {
-    		message.delete(10);
-    		return message.channel.send("\`\`Упомяните человека которому хотите выдать тыквы!\`\`")
-    				.then(m => m.delete(5000))
+    		message.delete({timeout:10});
+    		return message.channel.send("\`\`Упомяните человека которому хотите выдать 🎃!\`\`")
+    				.then(m => m.delete({timeout:5000}))
     				.catch(err => console.log(err));
     	}
     	if(!args[2]) {
-    		message.delete(10);
+    		message.delete({timeout:10});
     		return message.channel.send("\`\`Укажите количество тыкв которые нужно выдать!\`\`")
-    				.then(m => m.delete(5000))
+    				.then(m => m.delete({timeout:5000}))
     				.catch(err => console.log(err));
     	}
     	if (isNaN(parseInt(args[2]))) {
-    		message.delete(10);
-    		return message.channel.send("\`\`количество принимается только в цыфрах!\`\`")
-    				.then(m => m.delete(5000))
+    		message.delete({timeout:10});
+    		return message.channel.send("\`\`Количество 🎃 принимается только в цыфрах!\`\`")
+    				.then(m => m.delete({timeout:5000}))
     				.catch(err => console.log(err));
 
     	}
-    	message.channel.send(`<@${args[1].id}> было выдано ${args[2]} тыкв`)
-    	membersValue.set(message.author.id, args[2])
+    	const memberToSetValue = message.mentions.members.first();
+    	if(!memberToSetValue) {
+    		await message.delete();
+    		return await message.channel.send(`\`\`Вы не правельно указали пользователя для выдачи!\`\` `)
+    			.then(m => m.delete({timeout:5000}));
+    	}
+    	message.channel.send(`<@${memberToSetValue.id}> было выдано ${args[2]} 🎃`)
+    	membersValue.set(memberToSetValue.id, args[2])
+    }
+    else {
+    	await message.delete();
+    	message.channel.send(`\`\`Нет прав для выполнения данной команды!\`\``)
+    		.then(m => m.delete({timeout:5000}))
+    }
+   }
+    /*Передача валюты другому человеку*/
+    if(message.content.startsWith(`${prefix}pay`)) {
+    	if (!membersValue.has(message.author.id)) {
+    		message.delete({timeout:10});
+    		return message.channel.send(`\`\`У человека нет записи в банке! Что-бы запсатся используйте:${prefix}$ \`\``)
+    			.then(m => m.delete({timeout:5000}))
+    	}
+    	const args = message.content.slice(`${prefix}pay`).trim().split(/ +/g);
+    	if(!args[1]) {
+    		await message.delete();
+    		return await message.channel.send(`\`\`Упомяните человека которому вы хотите передать 🎃!\`\``)
+    			.then(m => m.delete({timeout:5000}));
+    	}
+    	if(!args[2]) {
+    		await message.delete();
+    		return await message.channel.send(`\`\`Укажите количество 🎃!\`\``)
+    			.then(m => m.delete({timeout:5000}));
+    	}
+    	const payMember = message.mentions.members.first();
+    	if(!payMember) {
+    		await message.delete();
+    		return await message.channel.send(`\`\`Неверно указан пользователь для передачи!\`\``)
+    			.then(m => m.delete({timeout:5000}));
+    	}
+    	if (isNaN(parseInt(args[2]))) {
+    		await message.delete();
+    		return await message.channel.send("\`\`Количество 🎃 принимается только в цыфрах!\`\`")
+    				.then(m => m.delete({timeout:5000}))
+    				.catch(err => console.log(err));
+    	}
+    	if(membersValue.get(message.author.id) < parseInt(args[2])) {
+    		await message.delete();
+    		return await message.channel.send(`\`\`Выдать не возможно у вас не достаточно 🎃 \`\` `)
+    			.then(m => m.delete({timeout:5000}));
+    	}
+    	await message.delete();
+    	await membersValue.set(message.author.id,membersValue.get(message.author.id) - parseInt(args[2]));
+    	await membersValue.set(payMember.id, membersValue.get(payMember.id) + parseInt(args[2]));
+    	await message.channel.send(`\`\`Успешно передано ${args[2]} 🎃\`\``);
+
     }
 });
 const costil = [];
