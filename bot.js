@@ -687,8 +687,7 @@ const costil = [];
     bot.on('voiceStateUpdate', async (oldState,newState) => {
     		var channelMembers = 0; 
     		await newState.guild.channels.cache.filter(ch => ch.type === "voice").each(c => channelMembers += c.members.array().length);
-    		await newState.guild.channels.cache.get("722065610879533129").setName(`┃🔊┃Voice: ${channelMembers}`);
-    		await channelMembers = 0;
+    		await newState.guild.channels.cache.get("722065610879533129").setName(`┃🔊┃Voice: ${channelMembers}`).then(channelMembers = 0);
   
     	if(newState.channelID === "720357135669526558") {
     		const oldChannel = newState.guild.channels.cache.get("720357134793048155");
