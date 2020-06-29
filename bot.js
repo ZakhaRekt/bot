@@ -69,8 +69,6 @@ if(message.content.startsWith(`${prefix}say`)) {
 				.then(m => m.delete({timeout:5000}));
 		}
 		const sayEmbed = new Discord.MessageEmbed()
-			.setTitle("All Gamers")
-			.setColor("#ff4a4d")
 			.setDescription(`${args.slice(1).join(" ")}`)
 		message.delete();
 		message.channel.send(sayEmbed);
@@ -685,9 +683,14 @@ if(message.content.startsWith(`${prefix}mute`)) {
 const costil = [];
 /*Создание привата*/
     bot.on('voiceStateUpdate', async (oldState,newState) => {
-    		var channelMembers = 0; 
-    		await newState.guild.channels.cache.filter(ch => ch.type === "voice").each(c => channelMembers += c.members.array().length);
-    		await newState.guild.channels.cache.get("722065610879533129").setName(`┃🔊┃Voice: ${channelMembers}`).then(channelMembers = 0);
+    	const voiceMembers = newState.guild.channels.cache.filter(ch => ch.type === "voice").each(c => channelMembers += c.members.array().length;
+    		if(!voiceMembers || voiceMembers == 0) {
+    			await newState.guild.channels.cache.get("722065610879533129").setName(`┃🔊┃Voice: 0`);
+    		}
+    		if(voiceMembers > 0) {
+    			await newState.guild.channels.cache.get("722065610879533129").setName(`┃🔊┃Voice: ${voiceMembers}`);
+    		}
+
   
     	if(newState.channelID === "720357135669526558") {
     		const oldChannel = newState.guild.channels.cache.get("720357134793048155");
@@ -742,9 +745,9 @@ const costil = [];
 
  });
 bot.on('guildMemberAdd', async(member) => {
-	await member.guild.channels.cache.get("722065483934859325").setName(`┃🌏┃All Members: ${member.guild.membersCount}`);
+	await member.guild.channels.cache.get("722065483934859325").setName(`┃🌏┃All Members: ${member.guild.memberCount}`);
 });
 bot.on('guildMemberRemove', async(member) => {
-	await member.guild.channels.cache.get("722065483934859325").setName(`┃🌏┃All Members: ${member.guild.membersCount}`);
+	await member.guild.channels.cache.get("722065483934859325").setName(`┃🌏┃All Members: ${member.guild.memberCount}`);
 });
 
