@@ -683,7 +683,7 @@ if(message.content.startsWith(`${prefix}mute`)) {
 const costil = [];
 /*Создание привата*/
     bot.on('voiceStateUpdate', async (oldState,newState) => {
-    	const voiceMembers = newState.guild.channels.cache.filter(ch => ch.type === "voice").each(c => channelMembers += c.members.array().length);
+    	const voiceMembers = newState.guild.channels.cache.filter(ch => ch.type === "voice").each(c => c.members.array().length);
     		if(!voiceMembers || voiceMembers == 0) {
     			await newState.guild.channels.cache.get("722065610879533129").setName(`┃🔊┃Voice: 0`);
     		}
