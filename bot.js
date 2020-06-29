@@ -71,8 +71,7 @@ if(message.content.startsWith(`${prefix}say`)) {
 		const sayEmbed = new Discord.MessageEmbed()
 			.setTitle("All Gamers")
 			.setColor("#ff4a4d")
-			.addField("**Бот говорит**",`${args.slice(1).join(" ")}`)
-			.setFooter("© Info | All Gamers");
+			.setDescription(`${args.slice(1).join(" ")}`)
 		message.delete();
 		message.channel.send(sayEmbed);
 
@@ -173,7 +172,7 @@ if(message.content.startsWith(`${prefix}ban`)) {
 				return message.channel.send(`\`\`Вы не можете снять все роли у самого себя!\`\` `)
 						.then(m => m.delete({timeout:5000}))
 			}
-			if(message.member.roles.highest.position <= toBanMember.roles.highest.position) {
+			if (message.member.roles.highest.position <= toBanMember.roles.highest.position) {
 				message.delete({timeout:10})
 				return message.channel.send(`\`\`Даже не думай снять роли у того кто выше!\`\` `)
 						.then(m => m.delete({timeout:5000}))
@@ -197,6 +196,37 @@ if(message.content.startsWith(`${prefix}ban`)) {
 				.then(m => m.delete({timeout:5000}))
 	}
 }
+
+ /* Снять бан */
+ if(message.content.startsWith(`${prefix}unban`)) {
+ 	if(message.member.hasPermission("ADMINISTRATOR") || message.author.id == '422109629112254464' || message.author.id == '407228819498336256') {
+ 		const args = message.content.slice(`${prefix}unban`).trim().split(/ +/g);
+ 		if(!args[1]) {
+ 			message.delete();
+ 			return message.channel.send(`\`\`Упомяните человека которого хоитите разбанить!\`\``)
+ 		}
+ 		const memberToUnban = message.mentions.members.first();
+ 		if(!memberToUnban) {
+ 			message.delete();
+ 			return message.channel.send(`\`\`Пользователь не найден на сервере!\`\``)
+ 		}
+ 		await memberToUnban.roles.remove("720246252067094650");
+ 		await memberToUnban.roles.add("");
+ 		const unBanEmbed = new Discord.MessageEmbed()
+ 			.setTitle("Unban")
+ 			.setColor("#ff4a4d")
+ 			.addField("**Разбанен пользователь**",`<@${memberToUnban.id}>`)
+ 			.addField("**Разбанен модератором**",`<@${message.author.id}>`)
+ 			.setFooter("© Unban | All Gamers")
+ 			.setTimestamp()
+ 		message.channel.send(unBanEmbed);
+ 	}
+ 	else {
+ 		message.delete();
+ 		message.channel.send(`\`\`Нет прав для выполнения данной команды!\`\``)
+ 			.then(m => m.delete({timeout:5000}));
+ 	}
+ }
 	/* Выдать варн */
 if(message.content.startsWith(`${prefix}warn`)) {
 	if(message.member.roles.highest.position >= 53) {
@@ -655,11 +685,11 @@ if(message.content.startsWith(`${prefix}mute`)) {
 const costil = [];
 /*Создание привата*/
     bot.on('voiceStateUpdate', async (oldState,newState) => {
-    	if(newState) {
     		var channelMembers = 0; 
     		await newState.guild.channels.cache.filter(ch => ch.type === "voice").each(c => channelMembers += c.members.array().length);
     		await newState.guild.channels.cache.get("722065610879533129").setName(`┃🔊┃Voice: ${channelMembers}`);
-    	}
+    		await channelMembers = 0;
+  
     	if(newState.channelID === "720357135669526558") {
     		const oldChannel = newState.guild.channels.cache.get("720357134793048155");
     		if(oldChannel.children.some(channel => channel.name === `${newState.member.displayName}`)) {
@@ -713,9 +743,9 @@ const costil = [];
 
  });
 bot.on('guildMemberAdd', async(member) => {
-	await member.guild.channels.cache.get("722065483934859325").setName(`┃🌏┃All Members: ${member.guild.members.cache.array().length}`);
+	await member.guild.channels.cache.get("722065483934859325").setName(`┃🌏┃All Members: ${member.guild.membersCount}`);
 });
 bot.on('guildMemberRemove', async(member) => {
-	await member.guild.channels.cache.get("722065483934859325").setName(`┃🌏┃All Members: ${member.guild.members.cache.array().length}`);
+	await member.guild.channels.cache.get("722065483934859325").setName(`┃🌏┃All Members: ${member.guild.membersCount}`);
 });
 
