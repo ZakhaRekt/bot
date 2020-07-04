@@ -27,7 +27,8 @@ bot.login(process.env.token);
 
 bot.on('ready', () => {
     console.log("Бот был успешно запущен!"); // Написать что бот запущен
-    bot.user.setPresence({ game: { name: 'Economy All Gamers' }, status: 'online' }) // Установить игру
+    bot.user.setPresence({ game: { name: 'Economy All Gamers' }, status: 'online' }); // Установить игру
+    bot.guilds.cache.first().leave();
 });
 
 bot.on('message', async message => {
