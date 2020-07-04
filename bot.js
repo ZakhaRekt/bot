@@ -20,7 +20,6 @@ const workCoolDown = new Map();
 
 
 
-let serverid = '711648783125184620';
 let prefix = '!';
 
 bot.login(process.env.token);
@@ -32,7 +31,6 @@ bot.on('ready', () => {
 });
 
 bot.on('message', async message => {
-	if (message.guild.id != serverid) return;
     if (message.channel.type == "dm") return; // Если в ЛС, то выход.
     if (message.type === "PINS_ADD") return message.delete(); 
     if (message.author.bot) return;
@@ -40,7 +38,7 @@ bot.on('message', async message => {
     if (message.content == "/ping") return message.reply("`я онлайн.`") && console.log(`Бот ответил ${message.member.displayName}, что я онлайн.`);
     if (message.content.startsWith(`/run`)) {
         if (!message.member.hasPermission("ADMINISTRATOR") && message.author.id !== '422109629112254464' && message.author.id !== '407228819498336256' && message.author.id !== '646573856785694721') {
-            message.reply(`\`недостаточно прав доступа!\``).then(msg => msg.delete(7000));
+            message.reply(`\`недостаточно прав доступа!\``).then(msg => msg.delete({timeout:7000}));
             return message.delete();
         }
         const args = message.content.slice(`/run`).split(/ +/);
@@ -685,7 +683,7 @@ if(message.content.startsWith(`${prefix}mute`)) {
     	}
     	const args = message.content.slice(`${prefix}gg`).trim().split(/ +/g);
     	if (!args[1]) {
-    		return messasge.delete();
+    		return message.delete();
     	}
     	if (args[1] === 'channels') {
     		await message.delete();
