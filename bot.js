@@ -69,6 +69,11 @@ if(message.content.startsWith(`${prefix}say`)) {
 		const sayEmbed = new Discord.MessageEmbed()
 			.setDescription(`${args.slice(1).join(" ")}`)
 		message.delete();
+		if(args[1].startsWith(`https://`)) {
+			sayEmbed
+			.setImage(`${args[1]}`)
+			.setDescription(`${args.splice(2).join("")}`)
+		}
 		message.channel.send(sayEmbed);
 
 	}
