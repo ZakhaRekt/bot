@@ -103,7 +103,7 @@ if(message.content.startsWith(`${prefix}changeprefix`)) {
 
     /* Команда для кика пользователя с привата */
 if(message.content.startsWith(`${prefix}pkick`)) {
-    	if(message.channel.id === "723927916605603890") {
+    	if(message.channel.id === "729402555620392960") {
     		if(message.member.voice.channel == null) {
     			message.delete({timeout:10});
     			return message.channel.send(`\`\`Вашего канала не существует!\`\``)
@@ -307,11 +307,6 @@ if(message.content.startsWith(`${prefix}sobr`)) {
 	}
 }
 if (message.content.startsWith(`${prefix}info`)) {
-	if (message.channel != message.guild.channels.cache.get("719986243160506571")) {
-		message.delete();
-		return message.channel.send(`\`\`Комадны можно использовать только в канале:\`\`<#719986243160506571>`)
-			.then(m => m.delete({timeout:5000}));
-	}
 	const rolesForAuthor = message.member.roles.cache
 				.filter(r => r.id !== message.guild.id)
                 .map(r => r).join("\n") || 'none';
@@ -353,11 +348,6 @@ if (message.content.startsWith(`${prefix}info`)) {
 }
 /*Система репорта*/
 if(message.content.startsWith(`${prefix}report`)) {
-	if (message.channel != message.guild.channels.cache.get("719986243160506571")) {
-		message.delete();
-		return message.channel.send(`\`\`Комадны можно использовать только в канале:\`\`<#719986243160506571>`)
-			.then(m => m.delete({timeout:5000}));
-	}
 	const memberCollDown = reportCullDown.get(message.author.id);
 	if(memberCollDown) {
 		const remaining = humanizeDuration(memberCollDown - Date.now(),{ language: "ru" });
@@ -408,11 +398,6 @@ if(message.content.startsWith(`${prefix}report`)) {
 
 }
 if(message.content.startsWith(`${prefix}inrole`)) {
-	if (message.channel != message.guild.channels.cache.get("719986243160506571")) {
-		message.delete();
-		return message.channel.send(`\`\`Комадны можно использовать только в канале:\`\`<#719986243160506571>`)
-			.then(m => m.delete({timeout:5000}));
-	}
 	if(message.member.roles.highest.position >= 49) {
 		const args = message.content.slice(`${prefix}inrole`).trim().split(/ +/g);
 		if(!args[1]) {
@@ -481,7 +466,7 @@ if(message.content.startsWith(`${prefix}mute`)) {
 
 		setTimeout(function() {
 			memberToMute.roles.remove(muteRole.id);
-			message.guild.channels.cache.get("719986243160506571").send(`<@${memberToMute.id}> \`\`Был размучен!\`\``);			
+			message.guild.channels.cache.get("728952336902258689").send(`<@${memberToMute.id}> \`\`Был размучен!\`\``);			
 		}, ms(args[2]));
 
 	}
@@ -737,7 +722,7 @@ const costil = [];
     if(oldState.channelID == costil[0] && newState.guild.channels.cache.find(z => z.id === costil[0]).members.array().length == 0) {
     	await costil.shift();
     	await oldState.channel.delete();
-    		if(newState.channelID === "720357135669526558") {
+    		if(newState.channelID === "728960900056481873") {
     			return;
     		}
 	}
