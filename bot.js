@@ -668,7 +668,6 @@ if(message.content.startsWith(`${prefix}mute`)) {
 
     }
 });
-const costil = [];
 /*Создание привата*/
     bot.on('voiceStateUpdate', async (oldState,newState) => {
     	var voiceMembers = 0;
@@ -680,7 +679,10 @@ const costil = [];
     			await newState.guild.channels.cache.get("728956135146782730").setName(`┃🔊┃Voice: ${voiceMembers}`);
     		}
 
-  
+  		if(oldState.channel.parentID === "728942374599917639" && oldState.channel.members.size == 0 && oldState.channelID != "728960900056481873") {
+  			await oldState.channel.delete();
+  		}
+
     	if(newState.channelID === "728960900056481873") {
     		const oldChannel = newState.guild.channels.cache.get("728942374599917639");
     		if(oldChannel.children.some(channel => channel.name === `${newState.member.displayName}`)) {
@@ -722,21 +724,16 @@ const costil = [];
     		],
     	});
     	await newState.setChannel(newPrivateChannel,"Moved to Privat Channel");
-    	await costil.push(newPrivateChannel.id);
     }
-    if(oldState.channelID == costil[0] && newState.guild.channels.cache.find(z => z.id === costil[0]).members.array().length == 0) {
-    	await costil.shift();
-    	await oldState.channel.delete();
-    		if(newState.channelID === "728960900056481873") {
-    			return;
-    		}
-	}
-
  });
 bot.on('guildMemberAdd', async(member) => {
 	await member.guild.channels.cache.get("728962881768652821").setName(`┃🌏┃All Members: ${member.guild.memberCount}`);
+	await warnMembers.set(member.id,0);
+	await membersValue.set(member.id,0);
 });
 bot.on('guildMemberRemove', async(member) => {
 	await member.guild.channels.cache.get("728962881768652821").setName(`┃🌏┃All Members: ${member.guild.memberCount}`);
+	await warnMembers.delete(member.id);
+	await membersValue.delete(member.id);
 });
 
