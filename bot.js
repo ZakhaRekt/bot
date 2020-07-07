@@ -668,10 +668,11 @@ if(message.content.startsWith(`${prefix}mute`)) {
 
     }
 });
+
 /*Создание привата*/
     bot.on('voiceStateUpdate', async (oldState,newState) => {
     	var voiceMembers = 0;
-    	newState.guild.channels.cache.filter(ch => ch.type === "voice").each(channel => voiceMembers += channel.members.size)
+    	await newState.guild.channels.cache.filter(ch => ch.type === "voice").each(channel => voiceMembers += channel.members.size)
     		if(!voiceMembers || voiceMembers == 0) {
     			await newState.guild.channels.cache.get("728956135146782730").setName(`┃🔊┃Voice: 0`);
     		}
@@ -680,11 +681,11 @@ if(message.content.startsWith(`${prefix}mute`)) {
     		}
 
   		if(oldState.channel.parentID === "728942374599917639" && oldState.channel.members.size == 0 && oldState.channelID != "728960900056481873") {
-  			await oldState.channel.delete();
+  			return await oldState.channel.delete();
   		}
 
     	if(newState.channelID === "728960900056481873") {
-    		const oldChannel = newState.guild.channels.cache.get("728942374599917639");
+    		const oldChannel = await newState.guild.channels.cache.get("728942374599917639");
     		if(oldChannel.children.some(channel => channel.name === `${newState.member.displayName}`)) {
 	    		await newState.guild.channels.cache.find(c => c.name === `${newState.member.displayName}`).delete();
 	    		return newState.member.send(`\`\`Нельзя создать более одного привата! \`\``)
