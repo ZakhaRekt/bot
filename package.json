@@ -1,29 +1,29 @@
 {
-  "name": "bot",
+  "name": "bamboni",
   "version": "1.0.0",
-  "description": "All Games Bot",
-  "main": "bot.js",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "engines": {
     "npm": "6.x",
     "node": "12.x"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ZakhaRekt/bot.git"
-  },
-  "author": "Zakhar Medunica",
+  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ZakhaRekt/bot/issues"
-  },
-  "homepage": "https://github.com/ZakhaRekt/bot#readme",
   "dependencies": {
-    "common-tags": "^1.8.0",
-    "discord.js": "^12.2.0",
-    "humanize-duration": "^3.23.1",
-    "ms": "^2.1.2"
+    "ascii-table": "0.0.9",
+    "delay": "^4.0.1",
+    "discord.js": "^12.3.1",
+    "mongoose": "^5.9.22",
+    "mongoose-paginate": "git://github.com/zerok78/mongoose-paginate.git#version-5.0.4",
+    "passfather": "^2.0.0",
+    "random-number": "0.0.9",
+    "superagent": "^3.8.3",
+    "xmlhttprequest": "^1.8.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.7.0"
   }
 }

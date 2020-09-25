@@ -44,5 +44,35 @@ module.exports = {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min)) + min; //Максимум не включается, минимум включается
+    },
+
+	objToStrMap: function(obj) {
+        let strMap = new Map();
+        for (let k of Object.keys(obj)) {
+            strMap.set(k, obj[k]);
         }
+        return strMap;
+
+    },
+    strMapToObj:function(strMap) {
+		  let obj = Object.create(null);
+		  for (let [k,v] of strMap) {
+		    // We don’t escape the key '__proto__'
+		    // which can cause problems on older engines
+		    obj[k] = v;
+		  }
+		  return JSON.stringify(obj);
+	},
+    getDateString:function() {
+    let date = new Date;
+    return `${date.getDate().toString().padStart(2, '0')}.` +
+        `${(date.getMonth() + 1).toString().padStart(2, '0')}.` +
+        `${date.getFullYear()} ` +
+        `${date.getHours().toString().padStart(2, '0')}:` +
+        `${date.getMinutes().toString().padStart(2, '0')}:` +
+        `${date.getSeconds().toString().padStart(2, '0')}`;
+    },
+    randomColor:function() {
+        return Math.floor(Math.random()*16777215).toString(16); //random hex for roles
+    }
 };
