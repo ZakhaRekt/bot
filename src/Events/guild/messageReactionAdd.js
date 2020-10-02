@@ -1,16 +1,17 @@
 const Discord = require('discord.js');
 
-const serverid = '325607843547840522';
+let serverid = '465086262383083520';
+
 const MafiaGame = require('../../data/mafia.js');
 const { getRandomInt, randomColor } = require("../../../functions.js");
 
-const mafiaVoiceChannel = '757600478732484639'; //Войс канал мафии
-const mafiaTextChannel = '757601774063452210'; //Текстовой канал мафии
+const mafiaVoiceChannel = '611151814573686785'; //Войс канал мафии
+const mafiaTextChannel = '702883306143744010'; //Текстовой канал мафии
 
-const mafiaRolePlayer = '757589808259399712'; //Роль играков мафии
-const mafiaRoleLeading = '757589888060227618'; //Роль ведущего
+const mafiaRolePlayer = '708319573451210796'; //Роль играков мафии
+const mafiaRoleLeading = '714505482257170492'; //Роль ведущего
 
-const mafiaBlackTeamChannel = '757601729742373005'; //Канал черных
+const mafiaBlackTeamChannel = '744960680473657364'; //Канал для черных играков
 
 
 module.exports = async (bot,reaction,user) => {
@@ -20,7 +21,7 @@ if (reaction.message.partial) await reaction.message.fetch();
   if (user.bot) return; 
   if (!reaction.message.guild) return; 
 
-  if (reaction.message.guild.id !== serverid) return;
+  if (reaction.message.guild.id !== serverid) return; 
   
   if (reaction.message.channel.id === mafiaTextChannel) { 
   MafiaGame.findOne({started:false}, async (err,data) => {
@@ -38,18 +39,16 @@ if (reaction.message.partial) await reaction.message.fetch();
               /*Регистрация*/
     if (reaction.emoji.name === "✔") {
     	if(reaction.message.author.bot){
-    		if(reaction.count >= 12 || reaction.message.guild.member(user).voice.channel.id != mafiaVoiceChannel) {
+    		if(reaction.count >= 12) {
           const userReactions = reaction.message.reactions.cache.filter(reaction => reaction.users.cache.has(user.id));
-            try {
-              for (const react of userReactions.values()) {
-                return await react.users.remove(user.id);
-              }
-            } catch (error) {
-              console.error('Failed to remove reactions.');
+          try {
+            for (const react of userReactions.values()) {
+              return await react.users.remove(user.id);
             }
+          } catch (error) {
+            console.error('Failed to remove reactions.');
+          }
         }
-        }
-        if(reaction.message.guild.member(user).voice.channel.id != mafiaVoiceChannel) return;
         if(reaction.message.guild.member(user.id).roles.cache.some(role => role.id === mafiaRoleLeading)) return;
     				await data.gamersDescription.push(`<@${user.id}>`);
             await data.players.push(user.id);
@@ -59,9 +58,9 @@ if (reaction.message.partial) await reaction.message.fetch();
     				await reaction.message.edit(mainEmb);
     	}
      	
-    
+    }
     /*Старт игры*/
-    if (reaction.emoji.name === "▶️") {
+if (reaction.emoji.name === "▶️") {
         if(!reaction.message.guild.member(user).roles.cache.some(role => role.id === mafiaRoleLeading)) return;
         if(data.players.length < 10) return reaction.message.channel.send(`Вы не можете начать игру, не хватает игроков! ${data.players.length}/10`);
         await reaction.message.channel.send(`<@${user.id}> Начал игру! Идёт раздача ролей!`);
@@ -94,9 +93,9 @@ if (reaction.message.partial) await reaction.message.fetch();
                                             MENTION_EVERYONE: false,
                                             SEND_TTS_MESSAGES: false,
                                             EMBED_LINKS: true,
-                  }); 
-            } 
-          } catch(e) {
+                  });
+               } 
+            } catch(e) {
               reaction.message.channel.send(new Discord.MessageEmbed().setColor(`PURPLE`).setDescription(`<@${element}> У вас закрыта личка! Игра не начата!`));
               data.players.forEach((el, index) => {
                 reaction.message.guild.member(el).roles.remove(mafiaRolePlayer);
@@ -122,6 +121,10 @@ if (reaction.message.partial) await reaction.message.fetch();
          await data.delete();
          return await reaction.message.delete({timeout:3000});
      }
-  })    
+  });
+    
+  } else {
+    return; 
+  }
 }
-} 
+
