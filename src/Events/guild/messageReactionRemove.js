@@ -1,16 +1,17 @@
 const Discord = require('discord.js');
 
 
-let serverid = '465086262383083520';
-
+const serverid = '325607843547840522';
 const MafiaGame = require('../../data/mafia.js');
 
 
-const mafiaVoiceChannel = '611151814573686785'; //Войс канал мафии
-const mafiaTextChannel = '702883306143744010'; //Текстовой канал мафии
+const mafiaVoiceChannel = '757600478732484639'; //Войс канал мафии
+const mafiaTextChannel = '757601774063452210'; //Текстовой канал мафии
 
-const mafiaRolePlayer = '708319573451210796'; //Роль играков мафии
-const mafiaRoleLeading = '714505482257170492'; //Роль ведущего
+const mafiaRolePlayer = '757589808259399712'; //Роль играков мафии
+const mafiaRoleLeading = '757589888060227618'; //Роль ведущего
+
+const mafiaBlackTeamChannel = '757601729742373005'; //Канал черных
 
 module.exports = async (bot,reaction,user) => {
 	if (reaction.message.partial) await reaction.message.fetch(); 
@@ -23,6 +24,8 @@ module.exports = async (bot,reaction,user) => {
 
     if (reaction.emoji.name === "✔") {
            if(reaction.message.guild.member(user.id).roles.cache.some(role => role.id === mafiaRoleLeading)) return;
+        if(reaction.message.guild.member(user).voice.channel.id != mafiaVoiceChannel) return;
+
     		const botMsg = reaction.message;
     		MafiaGame.findOne({started:false}, async (err,data) => {
     			if(err) console.log(err);

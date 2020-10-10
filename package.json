@@ -15,10 +15,15 @@
   "dependencies": {
     "ascii-table": "0.0.9",
     "delay": "^4.0.1",
-    "discord.js": "^12.2.0",
+    "discord.js": "^12.3.1",
     "mongoose": "^5.9.22",
     "mongoose-paginate": "git://github.com/zerok78/mongoose-paginate.git#version-5.0.4",
+    "passfather": "^2.0.0",
     "random-number": "0.0.9",
-    "superagent": "^3.8.3"
+    "superagent": "^3.8.3",
+    "xmlhttprequest": "^1.8.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.7.0"
   }
 }

@@ -1,33 +1,27 @@
 const Discord = require('discord.js');
 
-let serverid = '465086262383083520';
-
+const serverid = '325607843547840522';
 const Guild = require('../../data/guild.js');
 
-
-let rolesgg = [
-    "✦Сотрудники Правительства✦",
-    "✦Сотрудники ГИБДД✦",
-    "✦Сотрудники ГУВД✦",
-    "✦Агенты ФСБ✦",
-    "✦Сотрудники ВМЦ✦",
-    "✦Сотрудники ЦЛИ✦",
-    "✦Солдаты Нац.Гвардии✦",
-    "✦Сотрудники КСР✦",
-    "✦Сотрудники МРЭО✦",
-    "✦Сотрудники Банка✦",
-    "✦Фантомасы✦", 
-    "✦Санитары✦",
-    "✦Солнцевская Братва✦",
-    "✦Чёрные Кошки✦",
-    "✦Кавказская Мафия✦",
-    "✦Украинская Мафия✦",
-    "✦Русская Мафия✦",
-    "✦Сотрудники Академии МВД✦",
-    "✦Сотрудники Информационного Центра✦",
-    "✦Сотрудники Жёлтой Прессы✦",
-    "✦Сотрудники ОКБ✦",
+const rolesgg = [
+    "★ Администрация Президента ★",
+    "★ ФСБ ★",
+    "★ Новостное агентство \"Дождь\" ★",
+    "★ Радиостанция \"Рокс\" ★",
+    "★ ГУВД г.Арзамас ★",
+    "★ УВД г.Эдово ★",
+    "★ УВД г.Лыткарино ★",
+    "★ Больница г.Арзамас ★",
+    "★ Больница г.Эдово ★",
+    "★ Главное военно-медицинское управление ★",
+    "★ Вооруженные силы ★",
+    "★ ФСИН ★",
+    "★ МРЭО ★",
+    "★ Сбербанк ★",
+    "❖ ОПГ ❖",
+    "❖ Мафии ❖"
 ];
+
 
 const events = {
     MESSAGE_REACTION_ADD: 'messageReactionAdd',
@@ -50,7 +44,7 @@ module.exports = async (bot,event) => {
         let message = await channel.messages.fetch(event_messageid); // Получить сообщение из канала
         let member = server.members.cache.find(m => m.id == event_userid); // Получить пользователя с сервера
 
-        if (channel.name != `requests-for-roles`) return; // Если название канала не будет 'requests-for-roles', то выйти
+        if (channel.name != `🎫requests-for-roles`) return; // Если название канала не будет 'requests-for-roles', то выйти
         Guild.findOne({guildID: event_guildid}, async (err,data) => {
         		if(err) console.log(err);
         		if(!data) {
@@ -90,7 +84,7 @@ module.exports = async (bot,event) => {
 	                	let person_snyatie = data.snyatie.indexOf(field_author.id + `=>` + field_user.id);
 	                	await data.snyatie.splice(person_snyatie, 1);
 	                	await data.save();
-	                } 
+	                }
 	                return message.delete();
 	            }
 	        } else if (event_emoji_name == "❌") {
@@ -119,7 +113,7 @@ module.exports = async (bot,event) => {
 	                let field_author = server.members.cache.find(m => "<@" + m.id + ">" == message.embeds[0].fields[0].value.split(/ +/)[1]);
 	                let field_user = server.members.cache.find(m => "<@" + m.id + ">" == message.embeds[0].fields[1].value.split(/ +/)[1]);
 	                let field_role = server.roles.cache.find(r => "<@&" + r.id + ">" == message.embeds[0].fields[2].value.split(/ +/)[3]);
-	                let field_channel = server.channels.cache.find(c => "<#" + c.id + ">" == message.embeds[0].fields[3].value.split(/ +/)[0]);
+	                let field_channel = server.channels.find(c => "<#" + c.id + ">" == message.embeds[0].fields[3].value.split(/ +/)[0]);
 	                if (member.id == field_author.id) return channel.send(`\`[ERROR]\` \`${member.displayName} свои запросы отклонять нельзя!\``).then(msg => msg.delete({timeout:5000}))
 	                if (!field_user.roles.cache.some(r => r.id == field_role.id)) {
 	                    if (data.snyatie.includes(field_author.id + `=>` + field_user.id)){

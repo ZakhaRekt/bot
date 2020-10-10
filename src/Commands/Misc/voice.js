@@ -4,7 +4,7 @@ const User = require("../../data/user.js");
 module.exports = {
 	name: "voice",
     category:"misc",
-	description: "Команда для просмотра количества минут в текущем голосовом чате.",
+	description: "Команда для просмотра каличаства минут в тикущем голосовом чате.",
 
 
 	async run (bot,message,args) {
@@ -26,6 +26,7 @@ module.exports = {
                     .setDescription(`
                         Вы провели в голосовом канале ${Math.round((Date.now() - data.joinTime)/60000)} минут!
                         `)
+                    .setFooter(`Что-бы сохранить свой результат -  вы должны выйти из голосового канала!`)
                 return message.channel.send(voiceTimeEmb);
         });
 	}

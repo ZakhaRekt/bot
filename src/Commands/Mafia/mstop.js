@@ -1,11 +1,13 @@
 const Discord = require('discord.js');
 const MafiaGame = require('../../data/mafia.js');
 
-const mafiaVoiceChannel = '611151814573686785'; //Войс канал мафии
-const mafiaTextChannel = '702883306143744010'; //Текстовой канал мафии
+const mafiaVoiceChannel = '757600478732484639'; //Войс канал мафии
+const mafiaTextChannel = '757601774063452210'; //Текстовой канал мафии
 
-const mafiaRolePlayer = '708319573451210796'; //Роль играков мафии
-const mafiaRoleLeading = '714505482257170492'; //Роль ведущего
+const mafiaRolePlayer = '757589808259399712'; //Роль играков мафии
+const mafiaRoleLeading = '757589888060227618'; //Роль ведущего
+
+const mafiaBlackTeamChannel = '757601729742373005'; //Канал черных
 
 
 module.exports = {
@@ -25,6 +27,9 @@ module.exports = {
 				await message.guild.member(element).roles.remove(mafiaRolePlayer);
 			});
 			await data.delete();
+			await message.guild.channels.cache.get(mafiaBlackTeamChannel).permissionOverwrites
+				.filter(perm => perm.type === 'member')
+				.each(perm => perm.delete());
 			await message.channel.send(`Игра успешно остановленна!`)
 		});
 	}

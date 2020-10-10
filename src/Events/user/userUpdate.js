@@ -16,6 +16,10 @@ module.exports = async (bot,oldUser,newUser) => {
             )
     }
     if(newUser.tag != oldUser.tag) { //если сменили логин
+        const PrivatChannel = bot.channels.cache.find(chan => chan.id === '757598794924949564').children.find(chil => chil.name === `${oldUser.tag}`);
+        if(PrivatChannel) {
+            PrivatCategoryChannel.setName(`${newUser.tag}`);
+        }
         bot.channels.cache.find(ch => ch.name === `special-logs`).send(
             new Discord.MessageEmbed()
             .setTitle(`Пользователь **${oldUser.tag}** изменил свой логин!`)

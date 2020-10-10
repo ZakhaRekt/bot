@@ -26,7 +26,7 @@ bot.login(process.env.token);
 
 bot.on("error", console.error);
 
-
+//Поднятие бота 07.08.2020
        
   
 
