@@ -1,28 +1,36 @@
 const mongoose = require('mongoose');
 const schema = mongoose.Schema({
    guildID: {
-       type:String
+   	type:String
    },
-   ownerID: {
-    type:String
-   },
-   guildName: {
-    type:String
-   },
-   //выдача ролей
+   //Роли
    nrpnames: {
-       type: Array,
-       default: []
+   	type: Array,
+   	default: []
    },
    sened: {
-       type: Array,
-       default: []
+   	type: Array,
+   	default: []
    },
    snyatie: {
-       type: Array,
-       default: []
+   	type: Array,
+   	default: []
    },
-   
+
+   //Модераторы
+   purpleModer: {
+      type:Array,
+      default:[]
+   },
+   yellowModer: {
+      type:Array,
+      default:[]
+   },
+   blueModer: {
+      type:Array,
+      default:[]
+   },
+
    //репорт
    countReports: {
       type: Number,
@@ -36,8 +44,6 @@ const schema = mongoose.Schema({
       type: Number,
       default: 0
    }
-
-
 
 
 });
